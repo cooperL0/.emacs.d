@@ -7,7 +7,6 @@
 (tool-bar-mode -1)
 (tooltip-mode -1)
 (menu-bar-mode -1)
-
 (setq visible-bell t)
 
 (column-number-mode)
@@ -33,9 +32,11 @@
 
 (require 'package)
 
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
+(setq package-archives '(("elpa" . "https://elpa.gnu.org/packages/")
+			 ("melpa" . "https://melpa.org/packages/")
+			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+                         ;;("org" . "https://orgmode.org/elpa/")
+                         ;;("elpa" . "https://elpa.gnu.org/packages/")))
 
 (setq package-check-signature nil)
 
@@ -74,6 +75,17 @@
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 
+
+
+
+(use-package org-journal
+  :init
+  (setq org-journal-dir "~/Documents/orgNotes/journal/"))
+
+(use-package org-journal-tags
+  :after (org-journal)
+  :config
+  (org-journal-tags-autosync-mode))
 ;;==============================================
 ;; java-lsp
 ;;==============================================
@@ -128,7 +140,8 @@
 ;;==============================================
 (require 'evil)
 (evil-mode 1)
-
+(evil-set-initial-state 'calendar-mode 'emacs)
+(evil-set-initial-state 'dired-mode 'emacs)
 ;;==============================================
 ;;Improving emacs defaults
 
@@ -229,3 +242,16 @@
 ;;===============================================
 
 (add-to-list 'default-frame-alist '(fullboth))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(org-journal-tags yasnippet which-key use-package rainbow-delimiters projectile poet-theme org-roam magit lsp-ui lsp-java ivy-rich helm-lsp flycheck evil emacsql-sqlite counsel company)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
