@@ -6,7 +6,7 @@
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
-(menu-bar-mode -1)
+(menu-bar-mode 1)
 (setq visible-bell t)
 
 (column-number-mode)
@@ -19,26 +19,33 @@
                 treemacs-mode-hook
                 eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
+;;**********************************************
+;; GUI Config
+;;**********************************************
 
-(set-face-attribute 'default nil :font "Iosevka Fixed" :height 130 )
-(set-face-attribute 'fixed-pitch nil :font "Iosevka Fixed")
-(set-face-attribute 'variable-pitch nil :font "Iosevka Fixed")
-(load-theme 'tsdh-light t)
+;; TODO: Choose font based on Host OS
+(set-face-attribute 'default nil :font "Monospace" :height 100 )
+(set-face-attribute 'fixed-pitch nil :font "Monospace")
+(set-face-attribute 'variable-pitch nil :font "Monospace")
+(load-theme 'whiteboard t)
 
 (add-hook 'text-mode-hook
            (lambda ()
             (variable-pitch-mode 1)))
 
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+;;**********************************************
+;; Package Repo Setup
+;;**********************************************
 
 (require 'package)
-
 (setq package-archives '(("elpa" . "https://elpa.gnu.org/packages/")
-			 ("melpa" . "https://melpa.org/packages/")
-			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+			 ("melpa" . "https://melpa.org/packages/")))
+			;; ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
                          ;;("org" . "https://orgmode.org/elpa/")
                          ;;("elpa" . "https://elpa.gnu.org/packages/")))
 
-(setq package-check-signature nil)
+;;(setq package-check-signature nil)
 
 (package-initialize)
 (unless package-archive-contents
@@ -51,6 +58,36 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+;;**********************************************
+;; Magit Setup
+;;**********************************************
+
+
+(use-package magit
+  :ensure t)
+
+;;**********************************************
+;; Treemacs Setup
+;;**********************************************
+
+
+(use-package treemacs-icons-dired
+  :hook (dired-mode . treemacs-icons-dired-enable-once)
+  :ensure t)
+
+;;**********************************************
+;; Python Setup
+;;**********************************************
+
+;;ensure that you have some sort of lsp installed via your package manager, for example on fedora
+;;sudo dnf install python-lsp-server
+(setq major-mode-remap-alist
+      '((python-mode . python-ts-mode)))
+
+;;**********************************************
+;; UTF Encoding, and etc
+;;**********************************************
+
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
@@ -58,6 +95,19 @@
 
 (set-language-environment "UTF-8")
 
+
+;;**********************************************
+;; Org Setup (org,journal)
+;;**********************************************
+
+(require 'org)
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-log-done t)
+
+;; org-mode bullets
+;;(require 'org-bullets)
+;;(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 (setq org-pretty-entities t)
 
@@ -69,23 +119,38 @@
 (setq elfeed-feeds
       '("http://feeds.arstechnica.com/arstechnica/features"))
 
-
 (add-to-list 'load-path "~/.emacs.d/lisp/")
-
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-
-
-
 
 (use-package org-journal
   :init
-  (setq org-journal-dir "~/Documents/orgNotes/journal/"))
+  (setq org-journal-dir "~/Documents/Notes/journal/")
+  (setq org-journal-date-format "%A, %d %B %Y"))
 
 (use-package org-journal-tags
   :after (org-journal)
   :config
   (org-journal-tags-autosync-mode))
+
+(defun org-journal-file-header-func (time)
+  "Custom function to create journal header."
+  (concat
+    (pcase org-journal-file-type
+      (`daily "#+TITLE: Daily Journal\n#+STARTUP: showeverything")
+      (`weekly "#+TITLE: Weekly Journal\n#+STARTUP: folded")
+      (`monthly "#+TITLE: Monthly Journal\n#+STARTUP: folded")
+      (`yearly "#+TITLE: Yearly Journal\n#+STARTUP: folded"))))
+
+(use-package org-download
+  :config
+  (setq-default org-download-image-dir "~/Pictures/emacs/org")
+  ;;org-download-clipboard
+  (bind-key "C-c s" 'org-download-clipboard)
+  )
+
+
+(setq org-journal-file-header 'org-journal-file-header-func)
+
+
 ;;==============================================
 ;; java-lsp
 ;;==============================================
@@ -100,20 +165,20 @@
 ;;   (setq use-package-always-ensure t)
 ;;   (require 'use-package)))
 
-(use-package projectile)
+;;(use-package projectile)
 ;;(use-package flycheck)
 ;;(use-package yasnippet :config (yas-global-mode))
 ;;(use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
 ;;  :config (setq lsp-completion-enable-additional-text-edit nil))
-(use-package hydra)
+;;(use-package hydra)
 ;;(use-package company)
 ;(use-package lsp-ui)
 ;;(use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
 ;;(use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
 ;;(use-package dap-java :ensure nil)
-(use-package helm-lsp)
-(use-package helm
-  :config (helm-mode))
+;;(use-package helm-lsp)
+;;(use-package helm
+;;  :config (helm-mode))
 ;;(use-package lsp-treemacs)
 
 
@@ -122,29 +187,19 @@
 ;;==============================================
 (global-visual-line-mode t)
 
-;;==============================================
-;; Org Mode config
-;;==============================================
 
-(require 'org)
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
-(setq org-log-done t)
-
-;; org-mode bullets
-;;(require 'org-bullets)
-;;(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
-;;==============================================
 ;; Evil Mode (if you really want it...)
 ;;==============================================
-(require 'evil)
-(evil-mode 1)
-(evil-set-initial-state 'calendar-mode 'emacs)
-(evil-set-initial-state 'dired-mode 'emacs)
+;;(require 'evil)
+;;(evil-mode 1)
+;;(evil-set-initial-state 'calendar-mode 'emacs)
+;;(evil-set-initial-state 'dired-mode 'emacs)
+;;(evil-set-initial-state 'elisp-mode 'emacs)
+
+
+
 ;;==============================================
 ;;Improving emacs defaults
-
 ;;==============================================
 
 ;; ivy rebinds
@@ -166,7 +221,7 @@
     (global-set-key (kbd "<f2> j") 'counsel-set-variable)
     (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
 (use-package swiper)
-
+    (global-set-key (kbd "C-r") 'swiper-isearch-backward)
     (global-set-key (kbd "C-s") 'swiper-isearch)
 
 
@@ -222,6 +277,10 @@
   ;;(add-to-list 'org-file-apps 
   ;;             '("\\.pdf\\'" . (lambda (file link)
   ;;                               (org-pdfview-open link))))
+
+(use-package pyvenv-auto
+  :hook ((python-mode . pyvenv-auto-run)))
+
   )
 
 ;;==============================================
@@ -238,17 +297,30 @@
   (setq tramp-default-method "plink")
 
   ;;/plinkx:Pi:/path/to/your/file/on/server
-)
+
+  
+  (set-face-attribute 'default nil :font "Iosevka Term" :height 115)
+  (set-face-attribute 'fixed-pitch nil :font "Iosevka Term")
+  (set-face-attribute 'variable-pitch nil :font "Consolas" :height 130)
+
+  (setq org-download-screenshot-method "powershell -c Add-Type -AssemblyName System.Windows.Forms;$image = [Windows.Forms.Clipboard]::GetImage();$image.Save('%s', [System.Drawing.Imaging.ImageFormat]::Png)")
+
+  
+  )
+
 ;;===============================================
 
-(add-to-list 'default-frame-alist '(fullboth))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes '(spacemacs-light whiteboard))
+ '(custom-safe-themes
+   '("fef6645175d4c5f9d573daca2ba4d7efa781be10967024d1d8e6ef0c4aa71437" "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af" "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf" default))
  '(package-selected-packages
-   '(org-journal-tags yasnippet which-key use-package rainbow-delimiters projectile poet-theme org-roam magit lsp-ui lsp-java ivy-rich helm-lsp flycheck evil emacsql-sqlite counsel company)))
+   '(logview treemacs log4j-mode magit impatient-mode org-alert org-download alert ivy-rich which-key counsel ivy filetree helm-lsp hydra projectile org-journal-tags org-journal spacemacs-theme rainbow-delimiters)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
