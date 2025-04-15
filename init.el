@@ -133,24 +133,24 @@
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
-(use-package org-journal
-  :init
-  (setq org-journal-dir "~/Documents/Notes/journal/")
-  (setq org-journal-date-format "%A, %d %B %Y"))
+;;(use-package org-journal
+ ;;  :init
+ ;;  (setq org-journal-dir "~/Documents/Notes/journal/")
+ ;;  (setq org-journal-date-format "%A, %d %B %Y"))
 
-(use-package org-journal-tags
-  :after (org-journal)
-  :config
-  (org-journal-tags-autosync-mode))
-
-(defun org-journal-file-header-func (time)
-  "Custom function to create journal header."
-  (concat
-    (pcase org-journal-file-type
-      (`daily "#+TITLE: Daily Journal\n#+STARTUP: showeverything")
-      (`weekly "#+TITLE: Weekly Journal\n#+STARTUP: folded")
-      (`monthly "#+TITLE: Monthly Journal\n#+STARTUP: folded")
-      (`yearly "#+TITLE: Yearly Journal\n#+STARTUP: folded"))))
+;;(use-package org-journal-tags
+ ;;  :after (org-journal)
+ ;;  :config
+ ;;  (org-journal-tags-autosync-mode))
+ 
+;;(defun org-journal-file-header-func (time)
+  ;; "Custom function to create journal header."
+  ;; (concat
+  ;;   (pcase org-journal-file-type
+  ;;     (`daily "#+TITLE: Daily Journal\n#+STARTUP: showeverything")
+  ;;     (`weekly "#+TITLE: Weekly Journal\n#+STARTUP: folded")
+  ;;     (`monthly "#+TITLE: Monthly Journal\n#+STARTUP: folded")
+  ;;     (`yearly "#+TITLE: Yearly Journal\n#+STARTUP: folded"))))
 
 (use-package org-download
   :config
@@ -160,7 +160,7 @@
   )
 
 
-(setq org-journal-file-header 'org-journal-file-header-func)
+;;(setq org-journal-file-header 'org-journal-file-header-func)
 
 
 ;;==============================================
