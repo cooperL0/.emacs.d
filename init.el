@@ -88,6 +88,7 @@
 ;; Projectile Setup
 ;;**********************************************
 ;;install ripgrep
+;;trying to use this to help find references
 (use-package projectile
   :ensure t
   :init
