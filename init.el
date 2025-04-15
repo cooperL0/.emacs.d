@@ -330,9 +330,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes '(spacemacs-light whiteboard))
  '(custom-safe-themes
-   '("fef6645175d4c5f9d573daca2ba4d7efa781be10967024d1d8e6ef0c4aa71437" "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af" "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf" default))
- '(package-selected-packages
-   '(logview treemacs log4j-mode magit impatient-mode org-alert org-download alert ivy-rich which-key counsel ivy filetree helm-lsp hydra projectile org-journal-tags org-journal spacemacs-theme rainbow-delimiters)))
+   '("fef6645175d4c5f9d573daca2ba4d7efa781be10967024d1d8e6ef0c4aa71437" "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af" "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf" default)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
