@@ -97,6 +97,12 @@
               ("s-p" . projectile-command-map)
               ("C-c p" . projectile-command-map)))
 
+;; this _may_ make projectile faster
+(setq projectile-mode-line
+         '(:eval (format " Projectile[%s]"
+                        (projectile-project-name))))
+
+
 ;;**********************************************
 ;; UTF Encoding, and etc
 ;;**********************************************
