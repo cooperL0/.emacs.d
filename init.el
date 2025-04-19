@@ -34,6 +34,9 @@
             (variable-pitch-mode 1)))
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
+(use-package beacon
+  :config (beacon-mode 1)
+  )
 ;;**********************************************
 ;; Package Repo Setup
 ;;**********************************************
