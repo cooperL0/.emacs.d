@@ -105,8 +105,8 @@
   (with-eval-after-load 'eglot (setq completion-category-default nil))
   (setq eglot-send-changes-idle-time 0.3)
   :hook
-  ((python-mode      . eglot-ensure)
-   (python-ts-mode   . elgot-ensure)
+  ((python-mode . eglot-ensure)
+   (python-ts-mode . eglot-ensure)
    ))
 
 (use-package orderless
@@ -413,9 +413,17 @@
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes '(spacemacs-light whiteboard))
  '(custom-safe-themes
-   '("fef6645175d4c5f9d573daca2ba4d7efa781be10967024d1d8e6ef0c4aa71437" "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af" "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf" default))
+   '("fef6645175d4c5f9d573daca2ba4d7efa781be10967024d1d8e6ef0c4aa71437"
+     "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af"
+     "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf"
+     default))
  '(package-selected-packages
-   '(orderless corfu yasnippet-snippets yasnippet envrc which-key treemacs-icons-dired rainbow-delimiters pyvenv-auto projectile org-journal-tags org-download magit ivy-rich helm-lsp counsel)))
+   '(auto-virtualenv corfu counsel envrc evil gnu-elpa-keyring-update
+		     helm-lsp ivy-rich magit orderless org-download
+		     org-journal-tags popup projectile pythonic
+		     pyvenv-auto rainbow-delimiters
+		     treemacs-icons-dired use-package which-key
+		     yasnippet-snippets)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
