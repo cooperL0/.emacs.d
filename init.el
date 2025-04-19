@@ -59,6 +59,63 @@
 (setq use-package-always-ensure t)
 
 ;;**********************************************
+;;Elgot + corfu 
+;;**********************************************
+
+;; corfu.el
+(use-package corfu
+  :ensure t
+  :config
+  (setq corfu-cycle t)
+  (setq corfu-auto t)
+  (setq corfu-auto-prefix 3)
+  (setq corfu-preselect 'prompt)
+  (setq corfu-separator ?\s)
+  (setq corfu-quit-no-match 'separator)
+  (setq corfu-preview-current nil)
+  (setq corfu-quit-at-boundary t)
+  (setq corfu-preselect-first nil)
+  (setq completion-cycle-threshold 3)
+  (setq tab-always-indent 'complete)
+  ;; https://github.com/minad/corfu#completing-in-the-minibuffer
+  ;;(defun corfu-enable-always-in-minibuffer ()
+  ;;  "Enable Corfu in the minibuffer if Vertico/Mct are not active."
+  ;;  (unless (or (bound-and-true-p mct--active)
+  ;;              (bound-and-true-p vertico--input))
+  ;;    ;; (setq-local corfu-auto nil)   ;; Enable/disable auto completion
+  ;;    (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
+  ;;                corfu-popupinfo-delay nil)
+  ;;    (corfu-mode 1)))
+  ;;(add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
+
+  )
+
+;; eglot.el 
+(use-package eglot
+  :ensure t
+  :bind
+  (:map eglot-mode-map
+        ("C-c l r" . eglot-rename)
+        ("C-c l d" . eldoc-help-at-point)
+        ("C-c l f" . eglot-format-buffer)
+        ("C-c l o" . eglot-code-action-organize-imports))
+  :config
+  (setq eglot-autoshutdown t)
+  (setq eglot-autoreconnect t)
+  (with-eval-after-load 'eglot (setq completion-category-default nil))
+  (setq eglot-send-changes-idle-time 0.3)
+  :hook
+  ((python-mode      . eglot-ensure)
+   (python-ts-mode   . elgot-ensure)
+   ))
+
+(use-package orderless
+  :demand t
+  :config
+  (setq completion-styles '(orderless flex)
+        completion-category-overrides '((eglot (styles . (orderless flex))))))
+
+;;**********************************************
 ;; Magit Setup
 ;;**********************************************
 
@@ -85,6 +142,21 @@
       '((python-mode . python-ts-mode)))
 
 ;;**********************************************
+;; yasnippet Setup
+;;**********************************************
+(use-package yasnippet
+  :config
+  :ensure t
+  :hook
+   (prog-mode . yas-minor-mode)
+  )
+
+
+(use-package yasnippet-snippets
+  :ensure t
+  )
+
+;;**********************************************
 ;; Projectile Setup
 ;;**********************************************
 ;;install ripgrep
@@ -96,12 +168,6 @@
   :bind (:map projectile-mode-map
               ("s-p" . projectile-command-map)
               ("C-c p" . projectile-command-map)))
-
-;; this _may_ make projectile faster
-(setq projectile-mode-line
-         '(:eval (format " Projectile[%s]"
-                        (projectile-project-name))))
-
 
 ;;**********************************************
 ;; UTF Encoding, and etc
@@ -330,6 +396,16 @@
 ;;===============================================
 
 
+
+
+;;**********************************************
+;; envrc Setup (direnv
+;;**********************************************
+;;enable as late as possible
+(use-package envrc
+  :hook (after-init . envrc-global-mode))
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -337,7 +413,9 @@
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes '(spacemacs-light whiteboard))
  '(custom-safe-themes
-   '("fef6645175d4c5f9d573daca2ba4d7efa781be10967024d1d8e6ef0c4aa71437" "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af" "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf" default)))
+   '("fef6645175d4c5f9d573daca2ba4d7efa781be10967024d1d8e6ef0c4aa71437" "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af" "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf" default))
+ '(package-selected-packages
+   '(orderless corfu yasnippet-snippets yasnippet envrc which-key treemacs-icons-dired rainbow-delimiters pyvenv-auto projectile org-journal-tags org-download magit ivy-rich helm-lsp counsel)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
