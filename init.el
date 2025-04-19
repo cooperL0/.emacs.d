@@ -63,32 +63,86 @@
 ;;**********************************************
 
 ;; corfu.el
-(use-package corfu
-  :ensure t
-  :config
-  (setq corfu-cycle t)
-  (setq corfu-auto t)
-  (setq corfu-auto-prefix 3)
-  (setq corfu-preselect 'prompt)
-  (setq corfu-separator ?\s)
-  (setq corfu-quit-no-match 'separator)
-  (setq corfu-preview-current nil)
-  (setq corfu-quit-at-boundary t)
-  (setq corfu-preselect-first nil)
-  (setq completion-cycle-threshold 3)
-  (setq tab-always-indent 'complete)
-  ;; https://github.com/minad/corfu#completing-in-the-minibuffer
-  ;;(defun corfu-enable-always-in-minibuffer ()
-  ;;  "Enable Corfu in the minibuffer if Vertico/Mct are not active."
-  ;;  (unless (or (bound-and-true-p mct--active)
-  ;;              (bound-and-true-p vertico--input))
-  ;;    ;; (setq-local corfu-auto nil)   ;; Enable/disable auto completion
-  ;;    (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
-  ;;                corfu-popupinfo-delay nil)
-  ;;    (corfu-mode 1)))
-  ;;(add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
+;; (use-package corfu
+;;   :ensure t
+;;   :config
+;;   (setq corfu-cycle t)
+;;   (setq corfu-auto t)
+;;   (setq corfu-auto-prefix 3)
+;;   (setq corfu-preselect 'prompt)
+;;   (setq corfu-separator ?\s)
+;;   (setq corfu-quit-no-match 'separator)
+;;   (setq corfu-preview-current nil)
+;;   (setq corfu-quit-at-boundary t)
+;;   (setq corfu-preselect-first nil)
+;;   (setq completion-cycle-threshold 3)
+;;   (setq tab-always-indent 'complete)
+;;   ;; https://github.com/minad/corfu#completing-in-the-minibuffer
+;;   ;;(defun corfu-enable-always-in-minibuffer ()
+;;   ;;  "Enable Corfu in the minibuffer if Vertico/Mct are not active."
+;;   ;;  (unless (or (bound-and-true-p mct--active)
+;;   ;;              (bound-and-true-p vertico--input))
+;;   ;;    ;; (setq-local corfu-auto nil)   ;; Enable/disable auto completion
+;;   ;;    (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
+;;   ;;                corfu-popupinfo-delay nil)
+;;   ;;    (corfu-mode 1)))
+;;   ;;(add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
 
+;;   )
+
+(use-package corfu
+  ;; Optional customizations
+  ;; :custom
+  ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+
+  ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
+  ;; :hook ((prog-mode . corfu-mode)
+  ;;        (shell-mode . corfu-mode)
+  ;;        (eshell-mode . corfu-mode))
+
+  :init
+
+  ;; Recommended: Enable Corfu globally.  Recommended since many modes provide
+  ;; Capfs and Dabbrev can be used globally (M-/).  See also the customization
+  ;; variable `global-corfu-modes' to exclude certain modes.
+  (global-corfu-mode)
+
+  ;; Enable optional extension modes:
+  ;; (corfu-history-mode)
+  ;; (corfu-popupinfo-mode)
   )
+
+
+
+
+
+
+
+(use-package emacs
+  :custom
+  ;; TAB cycle if there are only few candidates
+  ;; (completion-cycle-threshold 3)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (tab-always-indent 'complete)
+
+  ;; Emacs 30 and newer: Disable Ispell completion function.
+  ;; Try `cape-dict' as an alternative.
+  (text-mode-ispell-word-completion nil)
+
+  ;; Hide commands in M-x which do not apply to the current mode.  Corfu
+  ;; commands are hidden, since they are not used via M-x. This setting is
+  ;; useful beyond Corfu.
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  )
+
+
 
 ;; eglot.el 
 (use-package eglot
@@ -109,11 +163,14 @@
    (python-ts-mode . eglot-ensure)
    ))
 
+;; Optionally use the `orderless' completion style.
 (use-package orderless
-  :demand t
-  :config
-  (setq completion-styles '(orderless flex)
-        completion-category-overrides '((eglot (styles . (orderless flex))))))
+  :custom
+  ;; (orderless-style-dispatchers '(orderless-affix-dispatch))
+  ;; (orderless-component-separator #'orderless-escapable-split-on-space)
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)))))
 
 ;;**********************************************
 ;; Magit Setup
