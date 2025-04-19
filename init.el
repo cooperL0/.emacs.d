@@ -172,6 +172,11 @@
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
 
+
+;;**********************************************
+;; electric pair mode Setup
+;;**********************************************
+
 ;;**********************************************
 ;; Magit Setup
 ;;**********************************************
@@ -197,6 +202,8 @@
 ;;sudo dnf install python-lsp-server
 (setq major-mode-remap-alist
       '((python-mode . python-ts-mode)))
+
+
 
 ;;**********************************************
 ;; yasnippet Setup
@@ -420,10 +427,6 @@
   ;;             '("\\.pdf\\'" . (lambda (file link)
   ;;                               (org-pdfview-open link))))
 
-(use-package pyvenv-auto
-  :hook ((python-mode . pyvenv-auto-run)))
-
-  )
 
 ;;==============================================
 ;; Windows Specific Config
