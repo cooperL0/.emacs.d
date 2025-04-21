@@ -383,6 +383,21 @@
 
 
 (global-set-key (kbd "C-x C-!") 'push-mark-command)
+
+;;==============================================
+;; Auto Save Behavior
+;;==============================================
+;; inspired from https://emacs.stackexchange.com/questions/17210/how-to-place-all-auto-save-files-in-a-directory
+(setq backup-directory-alist '(("." . "~/.emacs-saves")))
+(setq lock-file-name-transforms
+      '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
+
+(setf kill-buffer-delete-auto-save-files t)
+
+
+(setq auto-save-file-name-transforms
+      `((".*" ,"~/.emacs-saves" t)))
+
 ;;==============================================
 ;; Mac Specific Config
 ;;==============================================
