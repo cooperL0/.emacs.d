@@ -392,7 +392,7 @@
 (setq lock-file-name-transforms
       '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
 
-(setf kill-buffer-delete-auto-save-files t)
+;;(setf kill-buffer-delete-auto-save-files t)
 
 
 (setq auto-save-file-name-transforms
