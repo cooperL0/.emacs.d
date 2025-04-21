@@ -121,11 +121,6 @@
   )
 
 
-
-
-
-
-
 (use-package emacs
   :custom
   ;; TAB cycle if there are only few candidates
@@ -385,6 +380,9 @@
 (use-package ivy-rich
   :init
   (ivy-rich-mode 1))
+
+
+(global-set-key (kbd "C-x C-!") 'push-mark-command)
 ;;==============================================
 ;; Mac Specific Config
 ;;==============================================
@@ -430,6 +428,7 @@
   ;;             '("\\.pdf\\'" . (lambda (file link)
   ;;                               (org-pdfview-open link))))
 
+  )
 
 ;;==============================================
 ;; Windows Specific Config
