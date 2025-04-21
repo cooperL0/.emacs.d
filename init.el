@@ -35,6 +35,7 @@
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 (use-package beacon
+  :ensure t
   :config (beacon-mode 1)
   )
 ;;**********************************************
@@ -94,6 +95,7 @@
 ;;   )
 
 (use-package corfu
+  :ensure t
   ;; Optional customizations
   ;; :custom
   ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
@@ -242,6 +244,11 @@
 
 (set-language-environment "UTF-8")
 
+;;**********************************************
+;;Markdown mode
+;;**********************************************
+(use-package markdown-mode
+  :ensure t)
 
 ;;**********************************************
 ;; Org Setup (org,journal)
