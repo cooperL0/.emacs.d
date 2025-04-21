@@ -172,6 +172,25 @@
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
 
+;;**********************************************
+;; flymake mode
+;;**********************************************
+(use-package flymake
+  :hook (prog-mode . flymake-mode))
+
+(defun my-filter-eglot-diagnostics (diags)
+    "Drop Pyright 'variable not accessed' notes from DIAGS."
+    (list (seq-remove (lambda (d)
+                        (and (eq (flymake-diagnostic-type d) 'eglot-note)
+                             (s-starts-with? "Pyright:" (flymake-diagnostic-text d))
+                             (s-ends-with? "is not accessed" (flymake-diagnostic-text d))))
+                      (car diags))))
+
+(advice-add 'eglot--report-to-flymake :filter-args #'my-filter-eglot-diagnostics)
+
+(use-package flymake-ruff
+  :ensure t
+  :hook (eglot-managed-mode . flymake-ruff-load))
 
 ;;**********************************************
 ;; electric pair mode Setup
@@ -505,12 +524,12 @@
      "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf"
      default))
  '(package-selected-packages
-   '(auto-virtualenv corfu counsel envrc evil gnu-elpa-keyring-update
-		     helm-lsp ivy-rich magit orderless org-download
-		     org-journal-tags popup projectile pythonic
-		     pyvenv-auto rainbow-delimiters
-		     treemacs-icons-dired use-package which-key
-		     yasnippet-snippets)))
+   '(auto-virtualenv corfu counsel envrc evil flymake-ruff
+		     gnu-elpa-keyring-update helm-lsp ivy-rich magit
+		     orderless org-download org-journal-tags popup
+		     projectile pythonic pyvenv-auto
+		     rainbow-delimiters treemacs-icons-dired
+		     use-package which-key yasnippet-snippets)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
