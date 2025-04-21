@@ -175,6 +175,7 @@
 ;;**********************************************
 ;; flymake mode
 ;;**********************************************
+;;https://github.com/erickgnavar/flymake-ruff?tab=readme-ov-file
 (use-package flymake
   :hook (prog-mode . flymake-mode))
 
