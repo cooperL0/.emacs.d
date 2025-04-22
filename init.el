@@ -413,7 +413,7 @@
 
 
 (global-set-key (kbd "C-x C-!") 'push-mark-command)
-
+(global-set-key (kbd "C-x C-#") 'counsel-mark-ring)
 ;;==============================================
 ;; Auto Save Behavior
 ;;==============================================
