@@ -172,6 +172,7 @@
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
 
+
 ;;**********************************************
 ;; flymake mode
 ;;**********************************************
@@ -281,7 +282,7 @@
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
-
+(setq org-log-into-drawer t)
 ;; org-mode bullets
 ;;(require 'org-bullets)
 ;;(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -525,7 +526,7 @@
      "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf"
      default))
  '(package-selected-packages
-   '(auto-virtualenv corfu counsel envrc evil flymake-ruff
+   '(auto-virtualenv corfu counsel eglot-booster envrc evil flymake-ruff
 		     gnu-elpa-keyring-update helm-lsp ivy-rich magit
 		     orderless org-download org-journal-tags popup
 		     projectile pythonic pyvenv-auto
