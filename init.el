@@ -172,7 +172,6 @@
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
 
-
 ;;**********************************************
 ;; flymake mode
 ;;**********************************************
@@ -271,7 +270,7 @@
 (use-package markdown-mode
   :ensure t
   :mode ("README\\.md\\'" . gfm-mode)
-  :init (setq markdown-command "multimarkdown")
+  :init (setq markdown-command "pandoc")
   :bind (:map markdown-mode-map
          ("C-c C-e" . markdown-do)))
 ;;**********************************************
@@ -281,14 +280,25 @@
 (require 'org)
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
+(global-set-key (kbd "C-c c") #'org-capture)
 (setq org-log-done t)
-(setq org-log-into-drawer t)
+ 
 ;; org-mode bullets
 ;;(require 'org-bullets)
 ;;(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 (setq org-pretty-entities t)
 
+(setq org-todo-keywords
+      '((sequence "TODO" "PROG" "REVIEW" "VERIFY" "DONE")))
+
+
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/Notes/tasks/tasks.org" "Inbox")
+         "* TODO %?\n %U\n  %i\n %a")))
+
+(define-key global-map (kbd "C-c x")
+  (lambda () (interactive) (org-capture nil "x")))
 
 (org-babel-do-load-languages
  ;;enabling literate programming for java in org-mode
@@ -519,22 +529,17 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes '(spacemacs-light whiteboard))
+ '(custom-enabled-themes '(wombat))
  '(custom-safe-themes
-   '("fef6645175d4c5f9d573daca2ba4d7efa781be10967024d1d8e6ef0c4aa71437"
-     "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af"
-     "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf"
-     default))
+   '("fef6645175d4c5f9d573daca2ba4d7efa781be10967024d1d8e6ef0c4aa71437" "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af" "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf" default))  
+ '(kill-do-not-save-duplicates t)
+ '(org-agenda-files '("/ssh:coop@deblab.lan:~/Notes/tasks.org"))
  '(package-selected-packages
-   '(auto-virtualenv corfu counsel eglot-booster envrc evil flymake-ruff
-		     gnu-elpa-keyring-update helm-lsp ivy-rich magit
-		     orderless org-download org-journal-tags popup
-		     projectile pythonic pyvenv-auto
-		     rainbow-delimiters treemacs-icons-dired
-		     use-package which-key yasnippet-snippets)))
+   '(orgit json-mode auto-virtualenv corfu counsel envrc evil flymake-ruff gnu-elpa-keyring-update helm-lsp ivy-rich magit orderless org-download org-journal-tags popup projectile pythonic pyvenv-auto rainbow-delimiters treemacs-icons-dired use-package which-key yasnippet-snippets)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(put 'narrow-to-region 'disabled nil)
