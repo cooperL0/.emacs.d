@@ -177,19 +177,8 @@
         ("C-c l f" . eglot-format-buffer)
         ("C-c l o" . eglot-code-action-organize-imports))
   :config
-
-  (setq eglot-autoshutdown t)
-  (setq eglot-autoreconnect t)
-  (with-eval-after-load 'eglot (setq completion-category-default nil))
-  (setq eglot-send-changes-idle-time 0.3)
   (add-to-list 'exec-path "~/.local/share/fnm/node-versions/v18.20.8/installation/bin")
-  :hook
-  ((python-mode . eglot-ensure)
-   (python-ts-mode . eglot-ensure)
-   (yaml-ts-mode . eglot-ensure)
-   (yaml-mode . eglot-ensure)
-   ))
-  ;;Below is using ths config: https://jointhefreeworld.org/blog/articles/emacs/yaml-schemas-in-emacs-eglot/
+    ;;Below is using ths config: https://jointhefreeworld.org/blog/articles/emacs/yaml-schemas-in-emacs-eglot/
   ;;But if this is not working for you, maybe check here https://github.com/joaotavora/eglot/discussions/918
   ;;When it comes to seting schemas per buffer, lsp-mode has lsp-yaml-select-buffer-schema and lsp-yaml-set-buffer-schema commands to pick schema from a list or set from a URI
   ;;https://www.reddit.com/r/emacs/comments/11xjpeq/comment/jdvdojg/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
@@ -206,6 +195,18 @@
                         :schemaStore (:enable t))
                  ;; here other language server configurations
                       ))
+  (setq eglot-autoshutdown t)
+  (setq eglot-autoreconnect t)
+  (with-eval-after-load 'eglot (setq completion-category-default nil))
+  (setq eglot-send-changes-idle-time 0.3)
+
+
+  :hook
+  ((python-mode . eglot-ensure)
+   (python-ts-mode . eglot-ensure)
+   (yaml-ts-mode . eglot-ensure)
+   (yaml-mode . eglot-ensure)
+   ))
 
 ;; Optionally use the `orderless' completion style.
 (use-package orderless
@@ -274,6 +275,8 @@
       '((yaml-mode . yaml-ts-mode)))
 (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
 
+(add-hook 'yaml-ts-mode-hook
+          (lambda () (local-set-key (kbd "TAB") 'complete-symbol)))
 ;;**********************************************
 ;; yasnippet Setup
 ;;**********************************************
