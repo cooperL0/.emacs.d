@@ -194,6 +194,11 @@
                         :schemaStore (:enable t))
                  ;; here other language server configurations
                       ))
+  (setq eglot-autoshutdown t)
+  (setq eglot-autoreconnect t)
+  (with-eval-after-load 'eglot (setq completion-category-default nil))
+  (setq eglot-send-changes-idle-time 0.3)
+  (add-to-list 'exec-path "~/.local/share/fnm/node-versions/v18.20.8/installation/bin")
   :hook
   ((python-mode . eglot-ensure)
    (python-ts-mode . eglot-ensure)
@@ -264,7 +269,8 @@
 ;;
 ;; yaml setup
 ;;
-
+(setq major-mode-remap-alist
+      '((yaml-mode . yaml-ts-mode)))
 (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
 
 ;;**********************************************
