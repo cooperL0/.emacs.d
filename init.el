@@ -61,6 +61,29 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
+;; **********************************************
+;; Treesitter
+;; **********************************************
+
+;;You can -- should! -- use tagged releases where possible. Most of Emacs 29.x is written for grammars released no later than mid 2023. If you use grammars *newer* than that, you'll probably run into font locking and indentation problems.
+;;I `maintain a list <https://github.com/mickeynp/combobulate>`__ of grammar versions valid with Combobulate and Emacs 29, but it is not a complete list. It ;;may serve as a starting point if you are unsure, though.
+
+(setq treesit-language-source-alist
+   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+     (cmake "https://github.com/uyha/tree-sitter-cmake")
+     (css "https://github.com/tree-sitter/tree-sitter-css")
+     (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+     (go "https://github.com/tree-sitter/tree-sitter-go")
+     (html "https://github.com/tree-sitter/tree-sitter-html")
+     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+     (json "https://github.com/tree-sitter/tree-sitter-json")
+     (make "https://github.com/alemuller/tree-sitter-make")
+     (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+     (python "https://github.com/tree-sitter/tree-sitter-python")
+     (toml "https://github.com/tree-sitter/tree-sitter-toml")
+     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+     (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
 ;;**********************************************
 ;;Elgot + corfu 
@@ -158,25 +181,24 @@
   ;;But if this is not working for you, maybe check here https://github.com/joaotavora/eglot/discussions/918
   ;;When it comes to seting schemas per buffer, lsp-mode has lsp-yaml-select-buffer-schema and lsp-yaml-set-buffer-schema commands to pick schema from a list or set from a URI
   ;;https://www.reddit.com/r/emacs/comments/11xjpeq/comment/jdvdojg/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-  
   (setq-default eglot-workspace-configuration
               '(:yaml ( :format (:enable t)
                         :validate t
                         :hover t
                         :completion t
 			;; Schemas will be loaded in order, top-to-bottom, so you can set 'fallbacks'
-                        :schemas ;;(https://raw.githubusercontent.com/my-user/my-project/project.schema.yml ["project.yml"]
-                                 (https://json.schemastore.org/yamllint.json ["/*.yml"])
+                        :schemas
+			         (/home/coop/.config/Code/User/globalStorage/dynatraceplatformextensions.dynatrace-extensions/1.298.0/extension.schema.json ["extension.yaml"]
+			         https://raw.githubusercontent.com/my-user/my-project/project.schema.yml ["project.yml"]
+                                 https://json.schemastore.org/yamllint.json ["/*.yml"])
                         :schemaStore (:enable t))
                  ;; here other language server configurations
                       ))
-  (setq eglot-autoshutdown t)
-  (setq eglot-autoreconnect t)
-  (with-eval-after-load 'eglot (setq completion-category-default nil))
-  (setq eglot-send-changes-idle-time 0.3)
   :hook
   ((python-mode . eglot-ensure)
    (python-ts-mode . eglot-ensure)
+   (yaml-ts-mode . eglot-ensure)
+   (yaml-mode . eglot-ensure)
    ))
 
 ;; Optionally use the `orderless' completion style.
@@ -239,7 +261,11 @@
 (setq major-mode-remap-alist
       '((python-mode . python-ts-mode)))
 
+;;
+;; yaml setup
+;;
 
+(add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
 
 ;;**********************************************
 ;; yasnippet Setup
@@ -445,7 +471,7 @@
   :init
   (ivy-rich-mode 1))
 
-
+(global-set-key (kbd "C-x C-b") 'ibuffer-list-buffers)
 (global-set-key (kbd "C-x C-!") 'push-mark-command)
 (global-set-key (kbd "C-x C-#") 'counsel-mark-ring)
 ;;==============================================
