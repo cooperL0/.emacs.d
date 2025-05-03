@@ -154,6 +154,22 @@
         ("C-c l f" . eglot-format-buffer)
         ("C-c l o" . eglot-code-action-organize-imports))
   :config
+  ;;Below is using ths config: https://jointhefreeworld.org/blog/articles/emacs/yaml-schemas-in-emacs-eglot/
+  ;;But if this is not working for you, maybe check here https://github.com/joaotavora/eglot/discussions/918
+  ;;When it comes to seting schemas per buffer, lsp-mode has lsp-yaml-select-buffer-schema and lsp-yaml-set-buffer-schema commands to pick schema from a list or set from a URI
+  ;;https://www.reddit.com/r/emacs/comments/11xjpeq/comment/jdvdojg/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+  
+  (setq-default eglot-workspace-configuration
+              '(:yaml ( :format (:enable t)
+                        :validate t
+                        :hover t
+                        :completion t
+			;; Schemas will be loaded in order, top-to-bottom, so you can set 'fallbacks'
+                        :schemas ;;(https://raw.githubusercontent.com/my-user/my-project/project.schema.yml ["project.yml"]
+                                 (https://json.schemastore.org/yamllint.json ["/*.yml"])
+                        :schemaStore (:enable t))
+                 ;; here other language server configurations
+                      ))
   (setq eglot-autoshutdown t)
   (setq eglot-autoreconnect t)
   (with-eval-after-load 'eglot (setq completion-category-default nil))
