@@ -305,8 +305,11 @@
 
 (setq org-pretty-entities t)
 
+(setq org-directory "~/Notes")
+(add-to-list 'org-agenda-files "/ssh:coop@deblab.lan:~/Notes/tasks.org" "~/Notes/tasks.org")
+
 (setq org-todo-keywords
-      '((sequence "TODO" "PROG" "REVIEW" "VERIFY" "DONE")))
+      '((sequence "TODO(t)" "PROG(p)" "REVIEW(r)" "VERIFY(v)" "DONE(d)")))
 
 
 (setq org-capture-templates
@@ -551,7 +554,7 @@
  '(custom-enabled-themes '(wombat))
  '(custom-safe-themes
    '("fef6645175d4c5f9d573daca2ba4d7efa781be10967024d1d8e6ef0c4aa71437" "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af" "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf" default))
- '(org-agenda-files '("/ssh:coop@deblab.lan:~/Notes/tasks.org"))
+
  '(package-selected-packages
    '(orgit flymake-ruff auto-virtualenv corfu counsel envrc evil gnu-elpa-keyring-update helm-lsp ivy-rich magit orderless org-download org-journal-tags popup projectile pythonic pyvenv-auto rainbow-delimiters treemacs-icons-dired use-package which-key yasnippet-snippets)))
 (custom-set-faces
