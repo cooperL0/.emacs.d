@@ -305,7 +305,8 @@
 
 (setq org-pretty-entities t)
 
-(setq org-directory "~/Notes")
+;; I do not want to set a directory for now, because I want my captures and such to be relative, if I'm using tramp or something for SSH connections, I do not want paths to be evaluated on the host system
+(setq org-directory nil)
 (add-to-list 'org-agenda-files "/ssh:coop@deblab.lan:~/Notes/tasks.org" "~/Notes/tasks.org")
 
 (setq org-todo-keywords
@@ -313,7 +314,7 @@
 
 
 (setq org-capture-templates
-      '(("t" "Todo" entry (file+headline "~/Notes/tasks/tasks.org" "Inbox")
+      '(("t" "Todo" entry (file+headline "./tasks.org" "Inbox")
          "* TODO %?\n %U\n  %i\n %a")))
 
 (define-key global-map (kbd "C-c x")
