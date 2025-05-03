@@ -177,6 +177,18 @@
         ("C-c l f" . eglot-format-buffer)
         ("C-c l o" . eglot-code-action-organize-imports))
   :config
+
+  (setq eglot-autoshutdown t)
+  (setq eglot-autoreconnect t)
+  (with-eval-after-load 'eglot (setq completion-category-default nil))
+  (setq eglot-send-changes-idle-time 0.3)
+  (add-to-list 'exec-path "~/.local/share/fnm/node-versions/v18.20.8/installation/bin")
+  :hook
+  ((python-mode . eglot-ensure)
+   (python-ts-mode . eglot-ensure)
+   (yaml-ts-mode . eglot-ensure)
+   (yaml-mode . eglot-ensure)
+   ))
   ;;Below is using ths config: https://jointhefreeworld.org/blog/articles/emacs/yaml-schemas-in-emacs-eglot/
   ;;But if this is not working for you, maybe check here https://github.com/joaotavora/eglot/discussions/918
   ;;When it comes to seting schemas per buffer, lsp-mode has lsp-yaml-select-buffer-schema and lsp-yaml-set-buffer-schema commands to pick schema from a list or set from a URI
@@ -194,17 +206,6 @@
                         :schemaStore (:enable t))
                  ;; here other language server configurations
                       ))
-  (setq eglot-autoshutdown t)
-  (setq eglot-autoreconnect t)
-  (with-eval-after-load 'eglot (setq completion-category-default nil))
-  (setq eglot-send-changes-idle-time 0.3)
-  (add-to-list 'exec-path "~/.local/share/fnm/node-versions/v18.20.8/installation/bin")
-  :hook
-  ((python-mode . eglot-ensure)
-   (python-ts-mode . eglot-ensure)
-   (yaml-ts-mode . eglot-ensure)
-   (yaml-mode . eglot-ensure)
-   ))
 
 ;; Optionally use the `orderless' completion style.
 (use-package orderless
