@@ -62,60 +62,6 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
-;; **********************************************
-;; Treesitter
-;; **********************************************
-
- (setq treesit-language-source-alist
-   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-     (cmake "https://github.com/uyha/tree-sitter-cmake")
-     (css "https://github.com/tree-sitter/tree-sitter-css")
-     (elisp "https://github.com/Wilfred/tree-sitter-elisp")
-     (go "https://github.com/tree-sitter/tree-sitter-go")
-     (html "https://github.com/tree-sitter/tree-sitter-html")
-     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
-     (json "https://github.com/tree-sitter/tree-sitter-json")
-     (make "https://github.com/alemuller/tree-sitter-make")
-     (markdown "https://github.com/ikatyang/tree-sitter-markdown")
-     (python "https://github.com/tree-sitter/tree-sitter-python")
-     (toml "https://github.com/tree-sitter/tree-sitter-toml")
-     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
-     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
-     (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
-
-;; (use-package tree-sitter
-;;   :config
- 
-  
-;;   ;;if you want to install all grammars: (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
-
-  
-;;   (global-tree-sitter-mode)
-;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
-
-;;    )
-
-;; (use-package tree-sitter-langs
-;;   :ensure t
-;;   :after tree-sitter)
-
-;; (use-package typescript-mode
-;;   :after tree-sitter
-;;   :config
-;;   ;; we choose this instead of tsx-mode so that eglot can automatically figure out language for server
-;;   ;; see https://github.com/joaotavora/eglot/issues/624 and https://github.com/joaotavora/eglot#handling-quirky-servers
-;;   (define-derived-mode typescriptreact-mode typescript-mode
-;;     "TypeScript TSX")
-
-;;   ;; use our derived mode for tsx files
-;;   (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
-;;   ;; by default, typescript-mode is mapped to the treesitter typescript parser
-;;   ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
-;;   (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx))
-;;   )
-
-;;You can -- should! -- use tagged releases where possible. Most of Emacs 29.x is written for grammars released no later than mid 2023. If you use grammars *newer* than that, you'll probably run into font locking and indentation problems.
-;;I `maintain a list <https://github.com/mickeynp/combobulate>`__ of grammar versions valid with Combobulate and Emacs 29, but it is not a complete list. It ;;may serve as a starting point if you are unsure, though.
 
 
 
@@ -199,7 +145,7 @@
   (read-extended-command-predicate #'command-completion-default-include-p)
   )
 
-
+;; To debug eglot, use M-x eglot-events-buffer
 
 ;; eglot.el 
 (use-package eglot
@@ -211,7 +157,14 @@
         ("C-c l f" . eglot-format-buffer)
         ("C-c l o" . eglot-code-action-organize-imports))
   :config
-  (add-to-list 'exec-path "~/.local/share/npm/bin") 
+  ;; (setenv "PATH"
+  ;;       (concat
+  ;; 	 "~/.local/share/fnm/aliases/default/bin" path-separator
+  ;; 	 "~/.local/share/npm/bin" path-separator
+  ;; 	 "~/.local/share/fnm/node-versions/v18.13.0/installation/bin" path-separator
+  ;;        (getenv "PATH")))
+  (add-to-list 'exec-path "~/.local/share/npm/bin")
+  ;;(add-to-list 'exec-path "~/.local/share/fnm/node-versions/v18.13.0/installation/bin")
   (add-to-list 'exec-path "~/.local/share/fnm/node-versions/v18.20.8/installation/bin")
   
     ;;Below is using ths config: https://jointhefreeworld.org/blog/articles/emacs/yaml-schemas-in-emacs-eglot/
@@ -273,6 +226,82 @@
 (use-package flymake-ruff
   :ensure t
   :hook (eglot-managed-mode . flymake-ruff-load))
+
+
+;; **********************************************
+;; Treesitter
+;; **********************************************
+
+ (setq treesit-language-source-alist
+   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+     (cmake "https://github.com/uyha/tree-sitter-cmake")
+     (css "https://github.com/tree-sitter/tree-sitter-css")
+     (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+     (go "https://github.com/tree-sitter/tree-sitter-go")
+     (html "https://github.com/tree-sitter/tree-sitter-html")
+     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+     (json "https://github.com/tree-sitter/tree-sitter-json")
+     (make "https://github.com/alemuller/tree-sitter-make")
+     (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+     (python "https://github.com/tree-sitter/tree-sitter-python")
+     (toml "https://github.com/tree-sitter/tree-sitter-toml")
+     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+     (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+
+;; I'm not sure why this is needed, but it throws an error if I remove it
+(cl-defmethod project-root ((project (head eglot-project)))
+  (cdr project))
+
+(defun my-project-try-tsconfig-json (dir)
+  (when-let* ((found (locate-dominating-file dir "tsconfig.json")))
+    (cons 'eglot-project found)))
+
+(add-hook 'project-find-functions
+          'my-project-try-tsconfig-json nil nil)
+
+(with-eval-after-load 'eglot
+(add-to-list 'eglot-server-programs
+             '((typescript-mode) "typescript-language-server" "--stdio")))
+
+
+
+;; (use-package tree-sitter
+;;   :config
+ 
+  
+;;   ;;if you want to install all grammars: (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
+
+  
+;;   (global-tree-sitter-mode)
+;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+
+;;    )
+
+;; (use-package tree-sitter-langs
+;;   :ensure t
+;;   :after tree-sitter)
+
+;; (use-package typescript-mode
+;;   :after tree-sitter
+;;   :config
+;;   ;; we choose this instead of tsx-mode so that eglot can automatically figure out language for server
+;;   ;; see https://github.com/joaotavora/eglot/issues/624 and https://github.com/joaotavora/eglot#handling-quirky-servers
+;;   (define-derived-mode typescriptreact-mode typescript-mode
+;;     "TypeScript TSX")
+
+;;   ;; use our derived mode for tsx files
+;;   (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
+;;   ;; by default, typescript-mode is mapped to the treesitter typescript parser
+;;   ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
+;;   (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx))
+;;   )
+
+;;You can -- should! -- use tagged releases where possible. Most of Emacs 29.x is written for grammars released no later than mid 2023. If you use grammars *newer* than that, you'll probably run into font locking and indentation problems.
+;;I `maintain a list <https://github.com/mickeynp/combobulate>`__ of grammar versions valid with Combobulate and Emacs 29, but it is not a complete list. It ;;may serve as a starting point if you are unsure, though.
+
+
+
 
 ;;**********************************************
 ;; electric pair mode Setup
