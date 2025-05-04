@@ -17,7 +17,8 @@
                 term-mode-hook
                 shell-mode-hook
                 treemacs-mode-hook
-                eshell-mode-hook))
+                eshell-mode-hook
+		vterm-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 ;;**********************************************
 ;; GUI Config
@@ -65,10 +66,7 @@
 ;; Treesitter
 ;; **********************************************
 
-;;You can -- should! -- use tagged releases where possible. Most of Emacs 29.x is written for grammars released no later than mid 2023. If you use grammars *newer* than that, you'll probably run into font locking and indentation problems.
-;;I `maintain a list <https://github.com/mickeynp/combobulate>`__ of grammar versions valid with Combobulate and Emacs 29, but it is not a complete list. It ;;may serve as a starting point if you are unsure, though.
-
-(setq treesit-language-source-alist
+ (setq treesit-language-source-alist
    '((bash "https://github.com/tree-sitter/tree-sitter-bash")
      (cmake "https://github.com/uyha/tree-sitter-cmake")
      (css "https://github.com/tree-sitter/tree-sitter-css")
@@ -84,6 +82,42 @@
      (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
      (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
      (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+
+;; (use-package tree-sitter
+;;   :config
+ 
+  
+;;   ;;if you want to install all grammars: (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
+
+  
+;;   (global-tree-sitter-mode)
+;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+
+;;    )
+
+;; (use-package tree-sitter-langs
+;;   :ensure t
+;;   :after tree-sitter)
+
+;; (use-package typescript-mode
+;;   :after tree-sitter
+;;   :config
+;;   ;; we choose this instead of tsx-mode so that eglot can automatically figure out language for server
+;;   ;; see https://github.com/joaotavora/eglot/issues/624 and https://github.com/joaotavora/eglot#handling-quirky-servers
+;;   (define-derived-mode typescriptreact-mode typescript-mode
+;;     "TypeScript TSX")
+
+;;   ;; use our derived mode for tsx files
+;;   (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
+;;   ;; by default, typescript-mode is mapped to the treesitter typescript parser
+;;   ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
+;;   (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx))
+;;   )
+
+;;You can -- should! -- use tagged releases where possible. Most of Emacs 29.x is written for grammars released no later than mid 2023. If you use grammars *newer* than that, you'll probably run into font locking and indentation problems.
+;;I `maintain a list <https://github.com/mickeynp/combobulate>`__ of grammar versions valid with Combobulate and Emacs 29, but it is not a complete list. It ;;may serve as a starting point if you are unsure, though.
+
+
 
 ;;**********************************************
 ;;Elgot + corfu 
@@ -177,7 +211,9 @@
         ("C-c l f" . eglot-format-buffer)
         ("C-c l o" . eglot-code-action-organize-imports))
   :config
+  (add-to-list 'exec-path "~/.local/share/npm/bin") 
   (add-to-list 'exec-path "~/.local/share/fnm/node-versions/v18.20.8/installation/bin")
+  
     ;;Below is using ths config: https://jointhefreeworld.org/blog/articles/emacs/yaml-schemas-in-emacs-eglot/
   ;;But if this is not working for you, maybe check here https://github.com/joaotavora/eglot/discussions/918
   ;;When it comes to seting schemas per buffer, lsp-mode has lsp-yaml-select-buffer-schema and lsp-yaml-set-buffer-schema commands to pick schema from a list or set from a URI
@@ -397,38 +433,6 @@
 
 ;;(setq org-journal-file-header 'org-journal-file-header-func)
 
-
-;;==============================================
-;; java-lsp
-;;==============================================
-;;(condition-case nil
-;;    (require 'use-package)
-;;  (file-error
-;;  (require 'package)
-;;   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-;;   (package-initialize)
-;;  (package-refresh-contents)
-;;  (package-install 'use-package)
-;;   (setq use-package-always-ensure t)
-;;   (require 'use-package)))
-
-;;(use-package projectile)
-;;(use-package flycheck)
-;;(use-package yasnippet :config (yas-global-mode))
-;;(use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
-;;  :config (setq lsp-completion-enable-additional-text-edit nil))
-;;(use-package hydra)
-;;(use-package company)
-;(use-package lsp-ui)
-;;(use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
-;;(use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
-;;(use-package dap-java :ensure nil)
-;;(use-package helm-lsp)
-;;(use-package helm
-;;  :config (helm-mode))
-;;(use-package lsp-treemacs)
-
-
 ;;==============================================
 ;; global line wrapping
 ;;==============================================
@@ -580,6 +584,7 @@
 ;;**********************************************
 ;;enable as late as possible
 (use-package envrc
+  :ensure t
   :hook (after-init . envrc-global-mode))
 
 
@@ -590,10 +595,18 @@
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes '(wombat))
  '(custom-safe-themes
-   '("fef6645175d4c5f9d573daca2ba4d7efa781be10967024d1d8e6ef0c4aa71437" "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af" "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf" default))
-
+   '("fef6645175d4c5f9d573daca2ba4d7efa781be10967024d1d8e6ef0c4aa71437"
+     "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af"
+     "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf"
+     default))
  '(package-selected-packages
-   '(orgit flymake-ruff auto-virtualenv corfu counsel envrc evil gnu-elpa-keyring-update helm-lsp ivy-rich magit orderless org-download org-journal-tags popup projectile pythonic pyvenv-auto rainbow-delimiters treemacs-icons-dired use-package which-key yasnippet-snippets)))
+   '(auto-virtualenv corfu counsel envrc evil flymake-ruff
+		     gnu-elpa-keyring-update helm-lsp ivy-rich magit
+		     orderless org-download org-journal-tags orgit
+		     popup projectile pythonic pyvenv-auto
+		     rainbow-delimiters 
+		     treemacs-icons-dired typescript-mode
+		     use-package vterm which-key yasnippet-snippets)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
