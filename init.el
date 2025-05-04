@@ -629,13 +629,13 @@
      "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf"
      default))
  '(package-selected-packages
-   '(auto-virtualenv corfu counsel envrc evil flymake-ruff
-		     gnu-elpa-keyring-update helm-lsp ivy-rich magit
-		     orderless org-download org-journal-tags orgit
-		     popup projectile pythonic pyvenv-auto
-		     rainbow-delimiters 
-		     treemacs-icons-dired typescript-mode
-		     use-package vterm which-key yasnippet-snippets)))
+   '(auto-virtualenv corfu counsel envrc evil exec-path-from-shell
+		     flymake-ruff gnu-elpa-keyring-update helm-lsp
+		     ivy-rich magit orderless org-download
+		     org-journal-tags orgit popup projectile pythonic
+		     pyvenv-auto rainbow-delimiters
+		     treemacs-icons-dired typescript-mode use-package
+		     vterm which-key yasnippet-snippets)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
