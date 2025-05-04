@@ -63,7 +63,8 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
-
+(use-package exec-path-from-shell
+   :config (exec-path-from-shell-initialize))
 
 ;;**********************************************
 ;;Elgot + corfu 
@@ -166,6 +167,7 @@
   (add-to-list 'exec-path "~/.local/share/npm/bin")
   ;;(add-to-list 'exec-path "~/.local/share/fnm/node-versions/v18.13.0/installation/bin")
   (add-to-list 'exec-path "~/.local/share/fnm/node-versions/v18.20.8/installation/bin")
+
   
     ;;Below is using ths config: https://jointhefreeworld.org/blog/articles/emacs/yaml-schemas-in-emacs-eglot/
   ;;But if this is not working for you, maybe check here https://github.com/joaotavora/eglot/discussions/918
@@ -193,6 +195,8 @@
   :hook
   ((python-mode . eglot-ensure)
    (python-ts-mode . eglot-ensure)
+   (typescript-mode . eglot-ensure)
+   (typescript-ts-mode . eglot-ensure)
    (yaml-ts-mode . eglot-ensure)
    (yaml-mode . eglot-ensure)
    ))
@@ -259,6 +263,9 @@
 
 (add-hook 'project-find-functions
           'my-project-try-tsconfig-json nil nil)
+
+(setq major-mode-remap-alist
+      '((typescript-mode . typescript-ts-mode)))
 
 (with-eval-after-load 'eglot
 (add-to-list 'eglot-server-programs
