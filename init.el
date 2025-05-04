@@ -66,6 +66,11 @@
 (use-package exec-path-from-shell
    :config (exec-path-from-shell-initialize))
 
+(setq enable-recursive-minibuffers t)
+
+(use-package logview
+  :ensure t)
+
 ;;**********************************************
 ;;Elgot + corfu 
 ;;**********************************************
@@ -347,7 +352,6 @@
       '((yaml-mode . yaml-ts-mode)))
 (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
 
-;; I'm falling back on this for completion-at-point is set to tags-completion-at-point function, and I cannot figure out the issue.
 (add-hook 'yaml-ts-mode-hook
           (lambda () (local-set-key (kbd "TAB") 'complete-symbol)))
 ;;**********************************************
@@ -639,7 +643,7 @@
  '(package-selected-packages
    '(auto-virtualenv corfu counsel envrc evil exec-path-from-shell
 		     flymake-ruff gnu-elpa-keyring-update helm-lsp
-		     ivy-rich magit orderless org-download
+		     ivy-rich logview magit orderless org-download
 		     org-journal-tags orgit popup projectile pythonic
 		     pyvenv-auto rainbow-delimiters
 		     treemacs-icons-dired typescript-mode use-package
