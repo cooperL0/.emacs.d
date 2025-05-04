@@ -347,6 +347,7 @@
       '((yaml-mode . yaml-ts-mode)))
 (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
 
+;; I'm falling back on this for completion-at-point is set to tags-completion-at-point function, and I cannot figure out the issue.
 (add-hook 'yaml-ts-mode-hook
           (lambda () (local-set-key (kbd "TAB") 'complete-symbol)))
 ;;**********************************************
