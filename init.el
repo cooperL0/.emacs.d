@@ -62,7 +62,14 @@
   )
 
 (use-package ag
-  :ensure t)
+  :ensure t
+  )
+
+(use-package avy
+  :ensure t
+  :config (global-set-key (kbd "C-c C-'") 'avy-goto-char-2)
+  )
+
 ;;(use-package
 
 ;; npm install -g jsonlint
@@ -508,10 +515,27 @@
    (prog-mode . yas-minor-mode)
   )
 
+(use-package xref
+  :config
+(setq xref-search-program              
+      (cond                            
+       ((or (executable-find "ripgrep")
+        (executable-find "rg"))        
+    'ripgrep)                          
+       ((executable-find "ugrep")      
+    'ugrep)                            
+       (t                              
+    'grep)))                           
+)
 
 (use-package yasnippet-snippets
   :ensure t
   )
+
+(use-package ripgrep
+  :ensure t)
+(use-package rg
+  :ensure t)
 
 ;;**********************************************
 ;; Projectile Setup
@@ -633,7 +657,7 @@
 
 (use-package org-download
   :config
-  (setq-default org-download-image-dir "~/Pictures/emacs/org")
+  (setq-default org-download-image-dir "./images/")
   ;;org-download-clipboard
   (bind-key "C-c s" 'org-download-clipboard)
   )
@@ -691,9 +715,12 @@
     (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
     (global-set-key (kbd "<f2> j") 'counsel-set-variable)
     (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
+    (global-set-key (kbd "C-x d") 'counsel-dired)
+    (global-set-key (kbd "C-x C-b") 'ibuffer)
 (use-package swiper)
     (global-set-key (kbd "C-r") 'swiper-isearch-backward)
-    (global-set-key (kbd "C-s") 'swiper-isearch)    
+    (global-set-key (kbd "C-s") 'swiper-isearch)
+
 
 
 (use-package which-key
@@ -722,6 +749,83 @@
          ("C-c n i" . org-roam-node-insert))
   :config
   (org-roam-setup))
+
+(use-package denote
+     :ensure t
+     :hook
+     ( ;; If you use Markdown or plain text files, then you want to make
+      ;; the Denote links clickable (Org renders links as buttons right
+      ;; away)
+      (text-mode . denote-fontify-links-mode-maybe)
+      ;; Apply colours to Denote names in Dired.  This applies to all
+      ;; directories.  Check `denote-dired-directories' for the specific
+      ;; directories you may prefer instead.  Then, instead of
+      ;; `denote-dired-mode', use `denote-dired-mode-in-directories'.
+      (dired-mode . denote-dired-mode))
+     :bind
+     ;; Denote DOES NOT define any key bindings.  This is for the user to
+     ;; decide.  For example:
+     ( :map global-map
+       ("C-c d n" . denote)
+       ("C-c d d" . denote-dired)
+       ("C-c d g" . denote-grep)
+       ;; If you intend to use Denote with a variety of file types, it is
+       ;; easier to bind the link-related commands to the `global-map', as
+       ;; shown here.  Otherwise follow the same pattern for `org-mode-map',
+       ;; `markdown-mode-map', and/or `text-mode-map'.
+       ("C-c d l" . denote-link)
+       ("C-c d L" . denote-add-links)
+       ("C-c d b" . denote-backlinks)
+       ("C-c d q c" . denote-query-contents-link) ; create link that triggers a grep
+       ("C-c d q f" . denote-query-filenames-link) ; create link that triggers a dired
+       ;; Note that `denote-rename-file' can work from any context, not just
+       ;; Dired bufffers.  That is why we bind it here to the `global-map'.
+       ("C-c d r" . denote-rename-file)
+       ("C-c d R" . denote-rename-file-using-front-matter)
+   
+       ;; Key bindings specifically for Dired.
+       :map dired-mode-map
+       ("C-c C-d C-i" . denote-dired-link-marked-notes)
+       ("C-c C-d C-r" . denote-dired-rename-files)
+       ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
+       ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter))
+   
+     :config
+     ;; Remember to check the doc string of each of those variables.
+     (setq denote-directory (expand-file-name "~/Notes/denote"))
+     (setq denote-save-buffers nil)
+     (setq denote-known-keywords '("emacs" "python" "personal" "metanotes"))
+     (setq denote-infer-keywords t)
+     (setq denote-sort-keywords t)
+     (setq denote-prompts '(title keywords))
+     (setq denote-excluded-directories-regexp nil)
+     (setq denote-excluded-keywords-regexp nil)
+     (setq denote-rename-confirmations '(rewrite-front-matter modify-file-name))
+   
+     ;; Pick dates, where relevant, with Org's advanced interface:
+     (setq denote-date-prompt-use-org-read-date t)
+   
+     ;; Automatically rename Denote buffers using the `denote-rename-buffer-format'.
+     (denote-rename-buffer-mode 1))
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ;;==============================================
 ;; Auto Save Behavior
@@ -835,8 +939,15 @@
      "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af"
      "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf"
      default))
- '(org-agenda-files '("~/Notes/tasks/tasks.org"))
- '(package-selected-packages nil))
+ '(org-agenda-files
+   '("~/Notes/tasks/tasks.org" "~/Notes/tasks/inbox.org"
+     "~/Notes/denote/"))
+ '(package-selected-packages
+   '(ag beacon corfu counsel denote envrc exec-path-from-shell
+	flymake-ruff highlight-indentation ivy-rich logview
+	lsp-treemacs lsp-ui orderless org-download org-roam orgit
+	projectile rainbow-delimiters rg ripgrep treemacs-icons-dired
+	yaml yasnippet-snippets)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
