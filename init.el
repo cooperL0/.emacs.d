@@ -23,7 +23,8 @@
                 eshell-mode-hook
 		vterm-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
-
+;; set type of line numbering (global variable)
+(setq display-line-numbers-type 'relative)
 
 
 (set-register ?i '(file . "~/.emacs.d/init.el"))
@@ -32,6 +33,16 @@
 
 (setq line-number-mode nil)
 (setq-default line-spacing 8)
+
+(defun er-smart-open-line ()
+  "Insert an empty line after the current line.
+Position the cursor at its beginning, according to the current mode."
+  (interactive)
+  (move-end-of-line nil)
+  (newline-and-indent))
+
+(global-set-key [(M-return)] #'er-smart-open-line)
+
 
 (global-set-key (kbd "C-M-r") 'isearch-backward-regexp)
 (global-set-key (kbd "C-M-s") 'isearch-forward-regexp)
@@ -67,7 +78,7 @@
 
 (use-package avy
   :ensure t
-  :config (global-set-key (kbd "C-c C-'") 'avy-goto-char-2)
+  :config (global-set-key (kbd "C-'") 'avy-goto-char-2)
   )
 
 ;;(use-package
@@ -939,11 +950,12 @@
      "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af"
      "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf"
      default))
+ '(elfeed-feeds '("blog.aaronbieber.com/posts/index.xml"))
  '(org-agenda-files
    '("~/Notes/tasks/tasks.org" "~/Notes/tasks/inbox.org"
      "~/Notes/denote/"))
  '(package-selected-packages
-   '(ag beacon corfu counsel denote envrc exec-path-from-shell
+   '(ag beacon corfu counsel denote elfeed envrc exec-path-from-shell
 	flymake-ruff highlight-indentation ivy-rich logview
 	lsp-treemacs lsp-ui orderless org-download org-roam orgit
 	projectile rainbow-delimiters rg ripgrep treemacs-icons-dired
