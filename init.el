@@ -148,6 +148,7 @@ Position the cursor at its beginning, according to the current mode."
 	 (python-mode . highlight-indentation-mode)
 	 (python-ts-mode . highlight-indentation-mode)
 	 )
+  :diminish highlight-indentation-mode
   )
 
 (use-package yaml-pro
@@ -183,7 +184,13 @@ Position the cursor at its beginning, according to the current mode."
 ;;https://slinkp.com/python-emacs-lsp-20231229.html
 ;;(add-hook 'python-mode-hook 'lsp-deferred)
 
-
+;;https://github.com/emacs-lsp/lsp-pyright
+(use-package lsp-pyright
+  :ensure t
+  :custom (lsp-pyright-langserver-command "basedpyright") ;; or basedpyright
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-pyright)
+                          (lsp-deferred))))  ; or lsp-deferred
 (use-package lsp-mode
   :ensure t
   :commands lsp-ui-mode
@@ -452,6 +459,7 @@ Position the cursor at its beginning, according to the current mode."
 ;;**********************************************
 (use-package git-gutter
   :config (add-hook 'python-mode-hook 'git-gutter-mode)
+  :diminish git-gutter-mode
 	    )
 
 
@@ -491,6 +499,8 @@ Position the cursor at its beginning, according to the current mode."
   :requires (treemacs lsp-ui-mode)
   :init
   (lsp-treemacs-sync-mode 1)
+  :config
+  (setq lsp-headerline-breadcrumb-icons-enable nil)
   )
 
 ;;**********************************************
@@ -955,15 +965,14 @@ Position the cursor at its beginning, according to the current mode."
 ;;===============================================
 
 
-
-
 ;;**********************************************
 ;; envrc Setup (direnv
 ;;**********************************************
 ;;enable as late as possible
 (use-package envrc
   :ensure t
-  :hook (after-init . envrc-global-mode))
+  :hook (after-init . envrc-global-mode)
+  :diminish envrc-mode)
 
 
 (custom-set-variables
@@ -1017,10 +1026,10 @@ Position the cursor at its beginning, according to the current mode."
  '(package-selected-packages
    '(ag auto-revert beacon corfu counsel denote diminish ef-themes elfeed
 	envrc exec-path-from-shell flymake-ruff git-gutter
-	highlight-indentation ivy-rich logview lsp-treemacs lsp-ui
-	orderless org-download org-roam orgit projectile
-	rainbow-delimiters rg ripgrep treemacs-icons-dired yaml
-	yasnippet-snippets)))
+	highlight-indentation ivy-rich logview lsp-pyright
+	lsp-treemacs lsp-ui orderless org-download org-roam orgit
+	projectile rainbow-delimiters rg ripgrep treemacs-icons-dired
+	yaml yasnippet-snippets)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
