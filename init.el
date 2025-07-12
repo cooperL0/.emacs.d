@@ -278,6 +278,9 @@ Position the cursor at its beginning, according to the current mode."
   ;; commands are hidden, since they are not used via M-x. This setting is
   ;; useful beyond Corfu.
   (read-extended-command-predicate #'command-completion-default-include-p)
+  ;;========================
+  ;;disable visual-line-mode in prog mode
+  (add-hook 'prog-mode-hook (lambda () (visual-line-mode 0)))
   :diminish global-auto-revert-mode
             auto-revert-mode
             visual-line-mode)
