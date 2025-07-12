@@ -153,7 +153,7 @@ Position the cursor at its beginning, according to the current mode."
 (use-package yaml-pro
   :disabled
   :ensure t
-  )
+0  )
 
 ;; (use-package highlight-indent-guides
 ;;   :hook ((prog-mode . highlight-indent-guides-mode)
@@ -271,9 +271,9 @@ Position the cursor at its beginning, according to the current mode."
   ;; commands are hidden, since they are not used via M-x. This setting is
   ;; useful beyond Corfu.
   (read-extended-command-predicate #'command-completion-default-include-p)
-  :diminish auto-revert-mode
+  :diminish global-auto-revert-mode
+            auto-revert-mode
             visual-line-mode)
-
 
 ;; To debug eglot, use M-x eglot-events-buffer
 
