@@ -84,7 +84,7 @@ Position the cursor at its beginning, according to the current mode."
 
 (use-package avy
   :ensure t
-  :config (global-set-key (kbd "C-'") 'avy-goto-char-2)
+  :config (global-set-key (kbd "C-c C-;") 'avy-goto-char-2)
   )
 
 (use-package winner
