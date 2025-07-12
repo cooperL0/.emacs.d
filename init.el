@@ -30,6 +30,7 @@
 (set-register ?i '(file . "~/.emacs.d/init.el"))
 (set-register ?t '(file . "~/Notes/tasks/tasks.org"))
 (set-register ?b '(file . "~/Notes/tasks/inbox.org"))
+(set-register ?d '(file . "~/Notes/denote/"))
 
 (setq line-number-mode nil)
 (setq-default line-spacing 1)
@@ -90,6 +91,8 @@ Position the cursor at its beginning, according to the current mode."
   :ensure t
   :bind (("C-c <left>" . winner-undo)
 	 ("C-c <right>" . winner-redo))
+  :config
+  (winner-mode 1)
   )
 
 ;;(use-package
@@ -281,6 +284,14 @@ Position the cursor at its beginning, according to the current mode."
   ;;========================
   ;;disable visual-line-mode in prog mode
   (add-hook 'prog-mode-hook (lambda () (visual-line-mode 0)))
+
+
+  (defalias 'tri-layout
+  (kmacro "C-x 3 C-x { C-x z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z C-x 2 C-x o C-x o C-x 3 C-x } C-x z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z"))
+
+  
+  (global-set-key (kbd "C-x C-k 1") 'tri-layout)
+  
   :diminish global-auto-revert-mode
             auto-revert-mode
             visual-line-mode)
