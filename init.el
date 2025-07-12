@@ -8,7 +8,7 @@
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
-(menu-bar-mode -1)
+(menu-bar-mode 1)
 (setq visible-bell t)
 
 (column-number-mode)
@@ -32,7 +32,7 @@
 (set-register ?b '(file . "~/Notes/tasks/inbox.org"))
 
 (setq line-number-mode nil)
-(setq-default line-spacing 8)
+(setq-default line-spacing 1)
 
 (defun er-smart-open-line ()
   "Insert an empty line after the current line.
@@ -41,14 +41,19 @@ Position the cursor at its beginning, according to the current mode."
   (move-end-of-line nil)
   (newline-and-indent))
 
-(global-set-key [(M-return)] #'er-smart-open-line)
+;;(global-set-key [(M-return)] #'er-smart-open-line)
 (global-set-key (kbd "C-j") 'newline-and-indent)
 
 (global-set-key (kbd "C-M-r") 'isearch-backward-regexp)
 (global-set-key (kbd "C-M-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-M-y") 'up-list)
 
- (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+(use-package diminish
+  :ensure t)
+
+(use-package ediff
+  :config (setq ediff-window-setup-function 'ediff-setup-windows-plain))
 
 ;;**********************************************
 ;; GUI Config
@@ -66,9 +71,9 @@ Position the cursor at its beginning, according to the current mode."
             (variable-pitch-mode 1)))
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-
 (use-package beacon
   :ensure t
+  :diminish beacon-mode
   :config (beacon-mode 1)
   )
 
@@ -266,7 +271,8 @@ Position the cursor at its beginning, according to the current mode."
   ;; commands are hidden, since they are not used via M-x. This setting is
   ;; useful beyond Corfu.
   (read-extended-command-predicate #'command-completion-default-include-p)
-  )
+  :diminish auto-revert-mode
+            visual-line-mode)
 
 
 ;; To debug eglot, use M-x eglot-events-buffer
@@ -441,6 +447,12 @@ Position the cursor at its beginning, according to the current mode."
 ;;You can -- should! -- use tagged releases where possible. Most of Emacs 29.x is written for grammars released no later than mid 2023. If you use grammars *newer* than that, you'll probably run into font locking and indentation problems.
 ;;I `maintain a list <https://github.com/mickeynp/combobulate>`__ of grammar versions valid with Combobulate and Emacs 29, but it is not a complete list. It ;;may serve as a starting point if you are unsure, though.
 
+;;**********************************************
+;; Git-gutter mode
+;;**********************************************
+(use-package git-gutter
+  :config (add-hook 'python-mode-hook 'git-gutter-mode)
+	    )
 
 
 ;;**********************************************
@@ -523,14 +535,22 @@ Position the cursor at its beginning, according to the current mode."
 
 
 ;;**********************************************
+;; eldoc setup
+;;**********************************************
+(use-package eldoc
+  :diminish eldoc-mode)
+
+
+;;**********************************************
 ;; yasnippet Setup
 ;;**********************************************
 (use-package yasnippet
   :config
   :ensure t
+  :diminish yas-minor-mode
   :hook
    (prog-mode . yas-minor-mode)
-  )
+   )
 
 (use-package xref
   :config
@@ -561,6 +581,7 @@ Position the cursor at its beginning, according to the current mode."
 ;;trying to use this to help find references
 (use-package projectile
   :ensure t
+  :diminish projectile-mode
   :init
   (projectile-mode +1)
   :bind (:map projectile-mode-map
@@ -741,7 +762,8 @@ Position the cursor at its beginning, according to the current mode."
 
 
 (use-package which-key
-:init (which-key-mode)
+  :init (which-key-mode)
+  :diminish (which-key-mode)
 :config
 (setq which-key-idle-delay 1))
 
@@ -993,11 +1015,12 @@ Position the cursor at its beginning, according to the current mode."
    '("~/Notes/tasks/tasks.org" "~/Notes/tasks/inbox.org"
      "~/Notes/denote/"))
  '(package-selected-packages
-   '(ag beacon corfu counsel denote ef-themes elfeed envrc
-	exec-path-from-shell flymake-ruff highlight-indentation
-	ivy-rich logview lsp-treemacs lsp-ui orderless org-download
-	org-roam orgit projectile rainbow-delimiters rg ripgrep
-	treemacs-icons-dired yaml yasnippet-snippets)))
+   '(ag auto-revert beacon corfu counsel denote diminish ef-themes elfeed
+	envrc exec-path-from-shell flymake-ruff git-gutter
+	highlight-indentation ivy-rich logview lsp-treemacs lsp-ui
+	orderless org-download org-roam orgit projectile
+	rainbow-delimiters rg ripgrep treemacs-icons-dired yaml
+	yasnippet-snippets)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
