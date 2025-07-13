@@ -50,11 +50,26 @@ Position the cursor at its beginning, according to the current mode."
 (global-set-key (kbd "C-M-y") 'up-list)
 
 
+(use-package multiple-cursors
+  :ensure t
+  :custom
+  (global-set-key (kbd "C-s-c C-s-c") 'mc/edit-lines)
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+   )
+
+
 (use-package diminish
   :ensure t)
 
 (use-package ediff
   :config (setq ediff-window-setup-function 'ediff-setup-windows-plain))
+
+;; Allows for using a terminal like kitty, which can accept keyboard modifiers like Super/Hyper, which some OOTB term emulators cannot do
+(use-package kkp
+  :config
+  (global-kkp-mode 1))
 
 ;;**********************************************
 ;; GUI Config
@@ -84,7 +99,7 @@ Position the cursor at its beginning, according to the current mode."
 
 (use-package avy
   :ensure t
-  :config (global-set-key (kbd "C-c C-;") 'avy-goto-char-2)
+  :config (global-set-key (kbd "C-c ;") 'avy-goto-char-2)
   )
 
 (use-package winner
@@ -205,6 +220,7 @@ Position the cursor at its beginning, according to the current mode."
   
   :custom
   (setq lsp-headerline-breadcrumb-enable t)
+  (setq lsp-headerline-breadcrumb-icons-enable nil)
   ;;Not sure if these are necessary, but want to use ruff as my flymake backend instead of lsp diagnstics
   (setq lsp-diagnostics-provider :none)
   (setq lsp-ui-sideline-enable nil)
@@ -287,10 +303,8 @@ Position the cursor at its beginning, according to the current mode."
 
 
   (defalias 'tri-layout
-  (kmacro "C-x 3 C-x { C-x z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z C-x 2 C-x o C-x o C-x 3 C-x } C-x z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z"))
-
-  
-  (global-set-key (kbd "C-x C-k 1") 'tri-layout)
+    (kmacro "C-x 3 C-x { C-x z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z C-x 2 C-x o C-x o C-x 3 C-x } C-x z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z"))
+  (global-set-key (kbd "C-x C-k 1") 'tri-layout)}}
   
   :diminish global-auto-revert-mode
             auto-revert-mode
@@ -415,6 +429,7 @@ Position the cursor at its beginning, according to the current mode."
 ;; Treesitter
 ;; **********************************************
 
+
  (setq treesit-language-source-alist
    '((bash "https://github.com/tree-sitter/tree-sitter-bash")
      (cmake "https://github.com/uyha/tree-sitter-cmake")
@@ -432,7 +447,8 @@ Position the cursor at its beginning, according to the current mode."
      (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
      (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
-
+(use-package tree-sitter
+  :ensure t)
 
 ;; (use-package tree-sitter
 ;;   :config
@@ -1040,10 +1056,10 @@ Position the cursor at its beginning, according to the current mode."
  '(package-selected-packages
    '(ag auto-revert beacon corfu counsel denote diminish ef-themes elfeed
 	envrc exec-path-from-shell flymake-ruff git-gutter
-	highlight-indentation ivy-rich logview lsp-pyright
-	lsp-treemacs lsp-ui orderless org-download org-roam orgit
-	projectile rainbow-delimiters rg ripgrep treemacs-icons-dired
-	yaml yasnippet-snippets)))
+	highlight-indentation ivy-rich kkp logview lsp-pyright
+	lsp-treemacs lsp-ui multiple-cursors orderless org-download
+	org-roam orgit projectile rainbow-delimiters rg ripgrep
+	tree-sitter treemacs-icons-dired yaml yasnippet-snippets)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
