@@ -749,7 +749,13 @@ Position the cursor at its beginning, according to the current mode."
 
 (org-babel-do-load-languages
  ;;enabling literate programming for java in org-mode
- 'org-babel-load-languages '((java . t)))
+ 'org-babel-load-languages '(
+			     (java . t)
+			     (python . t)
+			     (shell . t)
+			     (emacs-lisp . t)
+			      )
+ )
 (global-set-key (kbd "C-x w") 'elfeed)
 
 
