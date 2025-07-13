@@ -213,14 +213,21 @@ Position the cursor at its beginning, according to the current mode."
   :ensure t
   :commands lsp-ui-mode
   :hook
-  (python-mode . lsp-deferred)
+  ((python-mode . lsp-deferred)
   (python-ts-mode . lsp-deferred)
   (yaml-ts-mode . lsp-deferred)
   (yaml-mode . lsp-deferred)
-  
+  (tsx-ts-mode . lsp-deferred)
+  (typescript-ts-mode . lsp-deferred)
+  (js-ts-mode . lsp-deferred))
+    
   :custom
-  (setq lsp-headerline-breadcrumb-enable t)
+  ;;experimental performance tuning
+  (setq read-process-output-max (* 10 1024 1024)) ;; 10mb
+  (setq gc-cons-threshold 200000000)
+  ;;===========
   (setq lsp-headerline-breadcrumb-icons-enable nil)
+  (setq lsp-headerline-breadcrumb-enable t)
   ;;Not sure if these are necessary, but want to use ruff as my flymake backend instead of lsp diagnstics
   (setq lsp-diagnostics-provider :none)
   (setq lsp-ui-sideline-enable nil)
@@ -304,6 +311,7 @@ Position the cursor at its beginning, according to the current mode."
 
   (defalias 'tri-layout
     (kmacro "C-x 3 C-x { C-x z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z C-x 2 C-x o C-x o C-x 3 C-x } C-x z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z"))
+
   (global-set-key (kbd "C-x C-k 1") 'tri-layout)
   
   :diminish global-auto-revert-mode
@@ -430,7 +438,10 @@ Position the cursor at its beginning, according to the current mode."
 ;; **********************************************
 
 
- (setq treesit-language-source-alist
+(use-package tree-sitter
+  :ensure t
+  :custom
+   (setq treesit-language-source-alist
    '((bash "https://github.com/tree-sitter/tree-sitter-bash")
      (cmake "https://github.com/uyha/tree-sitter-cmake")
      (css "https://github.com/tree-sitter/tree-sitter-css")
@@ -446,9 +457,39 @@ Position the cursor at its beginning, according to the current mode."
      (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
      (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
      (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+    :mode (("\\.tsx\\'" . tsx-ts-mode)
+             ("\\.js\\'"  . typescript-ts-mode)
+             ("\\.mjs\\'" . typescript-ts-mode)
+             ("\\.mts\\'" . typescript-ts-mode)
+             ("\\.cjs\\'" . typescript-ts-mode)
+             ("\\.ts\\'"  . typescript-ts-mode)
+             ("\\.jsx\\'" . tsx-ts-mode)
+             ("\\.json\\'" .  json-ts-mode)
+             ("\\.Dockerfile\\'" . dockerfile-ts-mode)
+             ("\\.prisma\\'" . prisma-ts-mode)
+             ;; More modes defined here...
+             )
+)
 
-(use-package tree-sitter
-  :ensure t)
+;;MANUAL: npm install -g eslint
+;;MANUAL: M-x lsp-install-server RET eslint RET
+(use-package lsp-tailwindcss
+ :ensure t
+ :after lsp-mode
+ :init (setq lsp-tailwindcss-add-on-mode t)
+      :config
+      (dolist (tw-major-mode
+               '(css-mode
+                 css-ts-mode
+                 typescript-mode
+                 typescript-ts-mode
+                 tsx-ts-mode
+                 js2-mode
+                 js-ts-mode
+                 clojure-mode))
+        (add-to-list 'lsp-tailwindcss-major-modes tw-major-mode)))
+
+
 
 ;; (use-package tree-sitter
 ;;   :config
@@ -520,6 +561,10 @@ Position the cursor at its beginning, according to the current mode."
   (define-key treemacs-mode-map [mouse-1] #'treemacs-single-click-expand-action)
   :bind(("M-0" . treemacs-select-window))
   )
+
+(use-package treemacs-projectile
+  :ensure t
+  :after treemacs)
 
 (use-package treemacs-icons-dired
   :hook (dired-mode . treemacs-icons-dired-enable-once)
@@ -1056,10 +1101,12 @@ Position the cursor at its beginning, according to the current mode."
  '(package-selected-packages
    '(ag auto-revert beacon corfu counsel denote diminish ef-themes elfeed
 	envrc exec-path-from-shell flymake-ruff git-gutter
-	highlight-indentation ivy-rich kkp logview lsp-pyright
-	lsp-treemacs lsp-ui multiple-cursors orderless org-download
-	org-roam orgit projectile rainbow-delimiters rg ripgrep
-	tree-sitter treemacs-icons-dired yaml yasnippet-snippets)))
+	highlight-indentation ivy-rich kkp logview lsp-eslint
+	lsp-pyright lsp-tailwindcss lsp-treemacs lsp-ui
+	multiple-cursors orderless org-download org-roam orgit
+	projectile rainbow-delimiters rg ripgrep tree-sitter
+	treemacs-icons-dired treemacs-projectile treesit yaml
+	yasnippet-snippets)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
