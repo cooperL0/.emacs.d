@@ -304,7 +304,7 @@ Position the cursor at its beginning, according to the current mode."
 
   (defalias 'tri-layout
     (kmacro "C-x 3 C-x { C-x z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z C-x 2 C-x o C-x o C-x 3 C-x } C-x z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z"))
-  (global-set-key (kbd "C-x C-k 1") 'tri-layout)}}
+  (global-set-key (kbd "C-x C-k 1") 'tri-layout)
   
   :diminish global-auto-revert-mode
             auto-revert-mode
