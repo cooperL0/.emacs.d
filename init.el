@@ -38,14 +38,24 @@
                              (horizontal-scroll-bars . nil))))
 (add-hook 'after-make-frame-functions 'my/disable-scroll-bars)
 
-;;https://emacs.stackexchange.com/questions/59791/font-and-frame-configuration-in-daemon-mode
-;; (defun my-configure-font (frame)
-;;   "Configure font given initial non-daemon FRAME.
-;; Intended for `after-make-frame-functions'."
-;;   ;; Do stuff with FRAME...
-;;   (remove-hook 'after-make-frame-functions #'my-configure-font))
 
-;; (add-hook 'after-make-frame-functions #'my-configure-font)
+;; TODO: Choose font based on Host OS
+(defun setFonts ()
+(set-face-attribute 'default nil :font "Source code pro" :height 92 )
+(set-face-attribute 'fixed-pitch nil :font "Source code pro" :height 92)
+(set-face-attribute 'variable-pitch nil :font "Adwaita Mono" :height 92)
+(setq default-frame-alist '((font . "Adwaita Mono")))
+)
+
+;;https://emacs.stackexchange.com/questions/59791/font-and-frame-configuration-in-daemon-mode
+(defun my-configure-font (frame)
+  "Configure font given initial non-daemon FRAME.
+Intended for `after-make-frame-functions'."
+  ;; Do stuff with FRAME...
+  (setFonts)
+  (remove-hook 'after-make-frame-functions #'my-configure-font))
+
+(add-hook 'after-make-frame-functions #'my-configure-font)
 
 
 (setenv "TZ" "America/New_York")
@@ -92,11 +102,8 @@ Position the cursor at its beginning, according to the current mode."
 ;; GUI Config
 ;;**********************************************
 
-;; TODO: Choose font based on Host OS
-(set-face-attribute 'default nil :font "Source code pro" :height 92 )
-(set-face-attribute 'fixed-pitch nil :font "Source code pro" :height 92)
-(set-face-attribute 'variable-pitch nil :font "Adwaita Mono" :height 92)
-(setq default-frame-alist '((font . "Adwaita Mono")))
+
+
 ;;(load-theme 'whiteboard t)
 
 (add-hook 'text-mode-hook
@@ -1127,15 +1134,7 @@ Position the cursor at its beginning, according to the current mode."
  '(org-agenda-files
    '("~/Notes/tasks/tasks.org" "~/Notes/tasks/inbox.org"
      "~/Notes/denote/"))
- '(package-selected-packages
-   '(ag auto-revert beacon corfu counsel denote diminish ef-themes elfeed
-	envrc exec-path-from-shell flymake-ruff git-gutter
-	highlight-indentation ivy-rich kkp logview lsp-eslint
-	lsp-pyright lsp-tailwindcss lsp-treemacs lsp-ui
-	multiple-cursors orderless org-download org-roam orgit
-	projectile rainbow-delimiters rg ripgrep tree-sitter
-	treemacs-icons-dired treemacs-projectile treesit yaml
-	yasnippet-snippets)))
+ '(package-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
