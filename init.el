@@ -24,7 +24,7 @@
 		vterm-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 ;; set type of line numbering (global variable)
-(setq display-line-numbers-type 'relative)
+(setq display-line-numbers-type 't)
 
 
 (set-register ?i '(file . "~/.emacs.d/init.el"))
@@ -32,6 +32,23 @@
 (set-register ?b '(file . "~/Notes/tasks/inbox.org"))
 (set-register ?d '(file . "~/Notes/denote/"))
 
+(defun my/disable-scroll-bars (frame)
+  (modify-frame-parameters frame
+                           '((vertical-scroll-bars . nil)
+                             (horizontal-scroll-bars . nil))))
+(add-hook 'after-make-frame-functions 'my/disable-scroll-bars)
+
+;;https://emacs.stackexchange.com/questions/59791/font-and-frame-configuration-in-daemon-mode
+;; (defun my-configure-font (frame)
+;;   "Configure font given initial non-daemon FRAME.
+;; Intended for `after-make-frame-functions'."
+;;   ;; Do stuff with FRAME...
+;;   (remove-hook 'after-make-frame-functions #'my-configure-font))
+
+;; (add-hook 'after-make-frame-functions #'my-configure-font)
+
+
+(setenv "TZ" "America/New_York")
 (setq line-number-mode nil)
 (setq-default line-spacing 1)
 
@@ -76,11 +93,11 @@ Position the cursor at its beginning, according to the current mode."
 ;;**********************************************
 
 ;; TODO: Choose font based on Host OS
-(set-face-attribute 'default nil :font "Source code pro" :height 95 )
-(set-face-attribute 'fixed-pitch nil :font "Source code pro" :height 95)
-(set-face-attribute 'variable-pitch nil :font "Adwaita Mono" :height 95)
+(set-face-attribute 'default nil :font "Source code pro" :height 92 )
+(set-face-attribute 'fixed-pitch nil :font "Source code pro" :height 92)
+(set-face-attribute 'variable-pitch nil :font "Adwaita Mono" :height 92)
 (setq default-frame-alist '((font . "Adwaita Mono")))
-(load-theme 'whiteboard t)
+;;(load-theme 'whiteboard t)
 
 (add-hook 'text-mode-hook
            (lambda ()
@@ -153,7 +170,7 @@ Position the cursor at its beginning, according to the current mode."
 (use-package logview
   :ensure t)
 
-(setq enable-recursive-minibuffers t)
+(setq enable-recursive-minibuffers nil)
 
 
 (use-package highlight-indentation
@@ -534,11 +551,17 @@ Position the cursor at its beginning, according to the current mode."
 	    )
 
 
+
+(use-package evil
+  :bind(("C-c 2" . evil-mode))
+  )
+
 ;;**********************************************
 ;; electric pair mode Setup
 ;;**********************************************
 (use-package elec-pair
   :commands elec-pair
+  :config (electric-pair-mode 1)
   :bind(("C-c (" . electric-pair-mode))
   )
 ;;**********************************************
@@ -556,7 +579,7 @@ Position the cursor at its beginning, according to the current mode."
 (use-package treemacs
   :ensure t
   :init
-  (setq treemacs-project-follow-mode t)
+  (setq treemacs-project-follow-mode 1)
   :config
   (define-key treemacs-mode-map [mouse-1] #'treemacs-single-click-expand-action)
   :bind(("M-0" . treemacs-select-window))
@@ -1061,7 +1084,7 @@ Position the cursor at its beginning, according to the current mode."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes '(modus-operandi-tinted))
+ '(custom-enabled-themes '(ef-dream))
  '(custom-safe-themes
    '("c038d994d271ebf2d50fa76db7ed0f288f17b9ad01b425efec09519fa873af53"
      "6af300029805f10970ebec4cea3134f381cd02f04c96acba083c76e2da23f3ec"
