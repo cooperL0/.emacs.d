@@ -11,9 +11,16 @@
 (menu-bar-mode 1)
 (setq visible-bell t)
 
+(display-time-mode 1)
+(setq display-time-day-and-date t)
+(setq display-time-load-average nil)
+
+
 (column-number-mode)
 (global-display-line-numbers-mode nil)
 (setq mouse-wheel-scroll-amount-horizontal 50)
+
+(global-hl-line-mode 1)
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
@@ -23,9 +30,10 @@
                 eshell-mode-hook
 		vterm-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
-;; set type of line numbering (global variable)
-(setq display-line-numbers-type 't)
 
+;; set type of line numbering (global variable)
+(setq display-line-numbers-type 'relative)
+(pixel-scroll-precision-mode 1)
 
 (set-register ?i '(file . "~/.emacs.d/init.el"))
 (set-register ?t '(file . "~/Notes/tasks/tasks.org"))
@@ -41,7 +49,7 @@
 
 ;; TODO: Choose font based on Host OS
 (defun setFonts ()
-(set-face-attribute 'default nil :font "Source code pro" :height 92 )
+(set-face-attribute 'default nil :font "Source code pro" :height 95)
 (set-face-attribute 'fixed-pitch nil :font "Source code pro" :height 92)
 (set-face-attribute 'variable-pitch nil :font "Adwaita Mono" :height 92)
 (setq default-frame-alist '((font . "Adwaita Mono")))
@@ -70,16 +78,16 @@ Position the cursor at its beginning, according to the current mode."
   (newline-and-indent))
 
 ;;(global-set-key [(M-return)] #'er-smart-open-line)
-(global-set-key (kbd "C-j") 'newline-and-indent)
+;;(global-set-key (kbd "C-j") 'newline-and-indent)
 
 (global-set-key (kbd "C-M-r") 'isearch-backward-regexp)
 (global-set-key (kbd "C-M-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-M-y") 'up-list)
-
+(global-set-key (kbd "C-,") 'duplicate-dwim)
 
 (use-package multiple-cursors
   :ensure t
-  :custom
+  :init
   (global-set-key (kbd "C-s-c C-s-c") 'mc/edit-lines)
   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
@@ -98,6 +106,10 @@ Position the cursor at its beginning, according to the current mode."
   :config
   (global-kkp-mode 1))
 
+
+  '(major-mode-remap-alist
+   '((python-mode . python-ts-mode) (yaml-mode . yaml-ts-mode)))
+
 ;;**********************************************
 ;; GUI Config
 ;;**********************************************
@@ -111,11 +123,13 @@ Position the cursor at its beginning, according to the current mode."
             (variable-pitch-mode 1)))
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-(use-package beacon
-  :ensure t
-  :diminish beacon-mode
-  :config (beacon-mode 1)
-  )
+
+
+;; (use-package beacon
+;;   :ensure t
+;;   :diminish beacon-mode
+;;   :config (beacon-mode 0)
+;;   )
 
 (use-package ag
   :ensure t
@@ -229,13 +243,19 @@ Position the cursor at its beginning, according to the current mode."
 ;;https://github.com/emacs-lsp/lsp-pyright
 (use-package lsp-pyright
   :ensure t
-  :custom (lsp-pyright-langserver-command "basedpyright") ;; or basedpyright
+  :preface (setq lsp-pyright-langserver-command "basedpyright") ;; or basedpyright
   :hook (python-mode . (lambda ()
                           (require 'lsp-pyright)
                           (lsp-deferred))))  ; or lsp-deferred
 (use-package lsp-mode
   :ensure t
   :commands lsp-ui-mode
+  :preface
+  '(lsp-diagnostics-disabled-modes '(python-mode python-ts-mode))
+
+
+;;  :init
+
   :hook
   ((python-mode . lsp-deferred)
   (python-ts-mode . lsp-deferred)
@@ -245,18 +265,30 @@ Position the cursor at its beginning, according to the current mode."
   (typescript-ts-mode . lsp-deferred)
   (js-ts-mode . lsp-deferred))
     
-  :custom
+  :config
   ;;experimental performance tuning
   (setq read-process-output-max (* 10 1024 1024)) ;; 10mb
   (setq gc-cons-threshold 200000000)
-  ;;===========
-  (setq lsp-headerline-breadcrumb-icons-enable nil)
+
+    (setq lsp-headerline-breadcrumb-icons-enable nil)
   (setq lsp-headerline-breadcrumb-enable t)
   ;;Not sure if these are necessary, but want to use ruff as my flymake backend instead of lsp diagnstics
-  (setq lsp-diagnostics-provider :none)
+  (setq lsp-diagnostics-mode 1)
+  (setq lsp-modeline-diagnostics-mode 1)
+  (setq lsp-diagnostics-provider :auto)
+  (setq lsp-modeline-diagnostics-enable t)
+
   (setq lsp-ui-sideline-enable nil)
-  (setq lsp-modeline-diagnostics-enable nil)
-  )
+  (add-hook 'hack-local-variables (lambda ()
+				    (when (derived-mode-p 'yaml-mode)
+				      (lsp))))
+  
+  (add-hook 'hack-local-variables (lambda ()
+			          (when (derived-mode-p 'yaml-ts-mode)
+			            (lsp))))
+  ;;===========
+
+)
 
 (use-package lsp-ui
   :ensure t)
@@ -312,7 +344,7 @@ Position the cursor at its beginning, according to the current mode."
 
 
 (use-package emacs
-  :custom
+  :config
   ;; TAB cycle if there are only few candidates
   ;; (completion-cycle-threshold 3)
 
@@ -322,16 +354,16 @@ Position the cursor at its beginning, according to the current mode."
 
   ;; Emacs 30 and newer: Disable Ispell completion function.
   ;; Try `cape-dict' as an alternative.
-  (text-mode-ispell-word-completion nil)
+  ;;(text-mode-ispell-word-completion nil)
 
   ;; Hide commands in M-x which do not apply to the current mode.  Corfu
   ;; commands are hidden, since they are not used via M-x. This setting is
   ;; useful beyond Corfu.
-  (read-extended-command-predicate #'command-completion-default-include-p)
+  ;;(read-extended-command-predicate #'command-completion-default-include-p)
   ;;========================
   ;;disable visual-line-mode in prog mode
   (add-hook 'prog-mode-hook (lambda () (visual-line-mode 0)))
-
+  (toggle-truncate-lines 1)
 
   (defalias 'tri-layout
     (kmacro "C-x 3 C-x { C-x z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z C-x 2 C-x o C-x o C-x 3 C-x } C-x z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z"))
@@ -614,9 +646,9 @@ Position the cursor at its beginning, according to the current mode."
 ;;ensure that you have some sort of lsp installed via your package manager, for example on fedora
 ;;sudo dnf install python-lsp-server
 (use-package python
-  :config
-  (setq major-mode-remap-alist
-      '((python-mode . python-ts-mode)))
+;;  :config
+;;  (setq major-mode-remap-alist
+;;      '((python-mode . python-ts-mode)))
   )
 
 
@@ -627,9 +659,8 @@ Position the cursor at its beginning, according to the current mode."
 ;;
 (use-package yaml
   :config
-  
-(setq major-mode-remap-alist
-      '((yaml-mode . yaml-ts-mode)))
+;;(setq major-mode-remap-alist
+;;      '((yaml-mode . yaml-ts-mode)))
 (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
 
 ;; (setq major-mode-remap-alist
@@ -645,7 +676,13 @@ Position the cursor at its beginning, according to the current mode."
 
 (add-hook 'yaml-mode-hook
           (lambda () (local-set-key (kbd "M-/") 'complete-symbol)))
-  
+
+(add-hook 'yaml-ts-mode-hook
+          (lambda () (local-set-key (kbd "C-c j") 'imenu)))
+
+(add-hook 'yaml-mode-hook
+          (lambda () (local-set-key (kbd "C-c j") 'imenu)))
+
   )
 
 
@@ -902,13 +939,14 @@ Position the cursor at its beginning, according to the current mode."
 
 (use-package org-roam
   :ensure t
-  :custom
-  (org-roam-directory "~/Notes/roam")
+;  :custom
+;  (org-roam-directory "~/Notes/roam")
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n i" . org-roam-node-insert))
   :config
-  (org-roam-setup))
+  (org-roam-setup)
+  )
 
 (use-package denote
      :ensure t
@@ -1007,11 +1045,7 @@ Position the cursor at its beginning, according to the current mode."
 
 (when (equal system-type 'darwin)
 
-  ;; make python be the default interpreter, and default for elpy (seen in) 'M-x elpy-config'
-  (setq python-shell-interpreter "/usr/local/bin/python3")
-  (setq elpy-rpc-python-command "/usr/local/bin/python3")
-  
-  (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin"))
+    (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin"))
 
 ;; set path for ispell
  (setq ispell-program-name "/usr/local/bin/ispell")
@@ -1110,6 +1144,7 @@ Position the cursor at its beginning, according to the current mode."
      "a3a71b922fb6cbf9283884ac8a9109935e04550bcc5d2a05414a58c52a8ffc47"
      "ae20535e46a88faea5d65775ca5510c7385cbf334dfa7dde93c0cd22ed663ba0"
      "00d7122017db83578ef6fba39c131efdcb59910f0fac0defbe726da8072a0729"
+     "59c36051a521e3ea68dc530ded1c7be169cd19e8873b7994bfc02a216041bf3b"
      "36c5acdaf85dda0dad1dd3ad643aacd478fb967960ee1f83981d160c52b3c8ac"
      "4c16a8be2f20a68f0b63979722676a176c4f77e2216cc8fe0ea200f597ceb22e"
      "90185f1d8362727f2aeac7a3d67d3aec789f55c10bb47dada4eefb2e14aa5d01"
@@ -1134,7 +1169,21 @@ Position the cursor at its beginning, according to the current mode."
  '(org-agenda-files
    '("~/Notes/tasks/tasks.org" "~/Notes/tasks/inbox.org"
      "~/Notes/denote/"))
- '(package-selected-packages nil))
+ '(package-selected-packages
+   '(ag corfu counsel denote diminish ef-themes envrc evil
+	exec-path-from-shell flymake-json flymake-ruff git-gutter
+	highlight-indent-guides highlight-indentation ivy-rich
+	json-mode kkp logview lsp-pyright lsp-tailwindcss lsp-treemacs
+	lsp-ui multiple-cursors orderless org-download
+	org-journal-tags org-roam orgit projectile pyvenv-auto
+	rainbow-delimiters rg ripgrep spacemacs-theme tree-sitter
+	treemacs-icons-dired treemacs-projectile which-key yaml-pro
+	yasnippet-snippets))
+ '(safe-local-variable-directories '("~/ext_dev/" ""))
+ '(safe-local-variable-values
+   '((lsp-yaml-schemas
+      (file:///home/cooper.lenzi%40dynatrace.org/.config/Code/User/globalStorage/dynatraceplatformextensions.dynatrace-extensions/1.309.0/extension.schema.json
+       . ["extension.yaml"])))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
