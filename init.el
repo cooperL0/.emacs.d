@@ -47,6 +47,18 @@
 (set-register ?t '(file . "~/Notes/tasks/tasks.org"))
 (set-register ?b '(file . "~/Notes/tasks/inbox.org"))
 (set-register ?d '(file . "~/Notes/denote/"))
+(set-register ?w '(file . "~/Downloads"))
+
+;;(set-register ?f ())
+
+(defun file-path-to-register (current-buffer)
+  (defvar file-path 'buffer-file-name
+    "Hold the content of the CURRENT-BUFFER (i.e. the path of the visisted file-buffer)")
+  (when buffer-file-name
+    (set-register ?f (eval file-path)))
+  )
+;;(file-path-to-register (current-buffer))
+(add-hook 'window-selection-change-functions 'file-path-to-register(current-buffer))
 
 (defun my/disable-scroll-bars (frame)
   (modify-frame-parameters frame
@@ -102,6 +114,14 @@ Position the cursor at its beginning, according to the current mode."
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
    )
 
+(use-package hyperbole
+  :ensure t
+  :config
+  (hyperbole-mode 1)
+  
+  :diminish hyperbole-mode
+  )
+
 
 (use-package diminish
   :ensure t)
@@ -145,7 +165,7 @@ Position the cursor at its beginning, according to the current mode."
 
 (use-package avy
   :ensure t
-  :config (global-set-key (kbd "C-c ;") 'avy-goto-char-2)
+  :config (global-set-key (kbd "C-c C-;") 'avy-goto-char-2)
   )
 
 (use-package winner
@@ -199,7 +219,7 @@ Position the cursor at its beginning, according to the current mode."
 (use-package logview
   :ensure t)
 
-(setq enable-recursive-minibuffers nil)
+(setq enable-recursive-minibuffers t)
 
 
 (use-package highlight-indentation
@@ -308,7 +328,7 @@ Position the cursor at its beginning, according to the current mode."
   :commands ace-window
   :ensure t
   :bind
-  (("M-o" . ace-window))
+  (("C-x M-o" . ace-window))
   :config
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
   )
@@ -929,7 +949,9 @@ Position the cursor at its beginning, according to the current mode."
   :init (which-key-mode)
   :diminish (which-key-mode)
 :config
-(setq which-key-idle-delay 1))
+;;(setq which-key-idle-delay 1)
+(which-key-setup-side-window-bottom)
+)
 
 (use-package ivy-rich
   :init
@@ -951,6 +973,7 @@ Position the cursor at its beginning, according to the current mode."
          ("C-c n f" . org-roam-node-find)
          ("C-c n i" . org-roam-node-insert))
   :config
+  (setq org-roam-directory "~/Notes/roam")
   (org-roam-setup)
   )
 
