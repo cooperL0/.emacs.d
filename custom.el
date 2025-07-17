@@ -44,14 +44,15 @@
      "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf"
      default))
  '(elfeed-feeds '("blog.aaronbieber.com/posts/index.xml"))
- '(lsp-diagnostics-disabled-modes '( python-ts-mode python-mode))
+ '(lsp-diagnostics-disabled-modes '(python-ts-mode python-mode))
  '(org-agenda-files
    '("~/Notes/tasks/tasks.org" "~/Notes/tasks/inbox.org"
      "~/Notes/denote/"))
+ '(org-fold-core-style 'overlays)
  '(package-selected-packages
    '(ag corfu counsel denote diminish ef-themes envrc evil
 	exec-path-from-shell flymake-json flymake-ruff git-gutter
-	highlight-indent-guides highlight-indentation ivy-rich
+	go-mode highlight-indent-guides highlight-indentation ivy-rich
 	json-mode kkp logview lsp-pyright lsp-tailwindcss lsp-treemacs
 	lsp-ui multiple-cursors orderless org-download
 	org-journal-tags org-roam orgit projectile pyvenv-auto

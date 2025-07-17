@@ -422,6 +422,7 @@ Position the cursor at its beginning, according to the current mode."
   (add-to-list 'exec-path "~/.local/share/npm/bin")
   ;;(add-to-list 'exec-path "~/.local/share/fnm/node-versions/v18.13.0/installation/bin")
   (add-to-list 'exec-path "~/.local/share/fnm/node-versions/v18.20.8/installation/bin")
+  (add-to-list 'exec-path "/usr/local/go")
 
   
     ;;Below is using ths config: https://jointhefreeworld.org/blog/articles/emacs/yaml-schemas-in-emacs-eglot/
@@ -522,13 +523,14 @@ Position the cursor at its beginning, according to the current mode."
 
 (use-package tree-sitter
   :ensure t
-  :custom
+  :config
    (setq treesit-language-source-alist
    '((bash "https://github.com/tree-sitter/tree-sitter-bash")
      (cmake "https://github.com/uyha/tree-sitter-cmake")
      (css "https://github.com/tree-sitter/tree-sitter-css")
      (elisp "https://github.com/Wilfred/tree-sitter-elisp")
      (go "https://github.com/tree-sitter/tree-sitter-go")
+     (gomod "https://github.com/camdencheek/tree-sitter-go-mod")
      (html "https://github.com/tree-sitter/tree-sitter-html")
      (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
      (json "https://github.com/tree-sitter/tree-sitter-json")
@@ -550,6 +552,7 @@ Position the cursor at its beginning, according to the current mode."
              ("\\.Dockerfile\\'" . dockerfile-ts-mode)
              ("\\.prisma\\'" . prisma-ts-mode)
              ;; More modes defined here...
+	     ("\\.go\\'" . go-ts-mode)
              )
 )
 
