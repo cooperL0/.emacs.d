@@ -118,10 +118,42 @@ Position the cursor at its beginning, according to the current mode."
   :ensure t
   :config
   (hyperbole-mode 1)
+
+
+  (defvar my/jira-cs-browse-url "https://example.atlassian.net/browse/")
+
+  (defun my/jira-cs-reference (jira-id)
+    "Open ticket in CS Jira"
+    (let ((url (concat my/jira-cs-browse-url jira-id)))
+      (browse-url-default-browser url)))
+
+  (defib my/jira-cs ()
+    "Get the Jira ticket identifier at point and load ticket in browser"
+    (let ((case-fold-search t)
+          (jira-id nil)
+          (jira-regex "\\(DXS-[0-9]+\\)"))
+      (if (or (looking-at jira-regex)
+              (save-excursion
+		(skip-chars-backward "0-9")
+		(skip-chars-backward "-")
+		(skip-chars-backward "DXS")
+		(looking-at jira-regex)))
+          (progn (setq jira-id (match-string-no-properties 1))
+		 (ibut:label-set jira-id
+				 (match-beginning 1)
+				 (match-end 1))
+		 (hact 'my/jira-cs-reference jira-id)))))
+
   
   :diminish hyperbole-mode
   )
 
+;; Tresitter folding...
+(use-package treesit-fold
+  :load-path "~/.emacs.d/source/tree-sitter"
+  :bind
+  (("<backtab>" . treesit-fold-toggle))
+  )
 
 (use-package diminish
   :ensure t)
@@ -289,7 +321,8 @@ Position the cursor at its beginning, according to the current mode."
   (yaml-mode . lsp-deferred)
   (tsx-ts-mode . lsp-deferred)
   (typescript-ts-mode . lsp-deferred)
-  (js-ts-mode . lsp-deferred))
+  (js-ts-mode . lsp-deferred)
+  (go-ts-mode . lsp-deferred))
     
   :config
   ;;experimental performance tuning

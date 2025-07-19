@@ -43,6 +43,7 @@
      "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af"
      "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf"
      default))
+ '(dired-listing-switches "-alt")
  '(elfeed-feeds '("blog.aaronbieber.com/posts/index.xml"))
  '(lsp-diagnostics-disabled-modes '(python-ts-mode python-mode))
  '(org-agenda-files
@@ -57,8 +58,8 @@
 	lsp-ui multiple-cursors orderless org-download
 	org-journal-tags org-roam orgit projectile pyvenv-auto
 	rainbow-delimiters rg ripgrep spacemacs-theme tree-sitter
-	treemacs-icons-dired treemacs-projectile which-key yaml-pro
-	yasnippet-snippets))
+	treemacs-icons-dired treemacs-projectile treesit-fold
+	which-key yaml-pro yasnippet-snippets))
  '(safe-local-variable-directories '("~/ext_dev/" ""))
  '(safe-local-variable-values
    '((lsp-yaml-schemas
