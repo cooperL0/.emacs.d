@@ -3,7 +3,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes '(ef-dream))
+ '(custom-enabled-themes '(ef-cherie))
  '(custom-safe-themes
    '("c038d994d271ebf2d50fa76db7ed0f288f17b9ad01b425efec09519fa873af53"
      "6af300029805f10970ebec4cea3134f381cd02f04c96acba083c76e2da23f3ec"
@@ -45,24 +45,37 @@
      default))
  '(dired-listing-switches "-alt")
  '(elfeed-feeds '("blog.aaronbieber.com/posts/index.xml"))
+ '(logview-additional-submodes
+   '(("dynatrace-extension"
+      (format
+       . "[IGNORED][IGNORED][THREAD][IGNORED]TIMESTAMP [LEVEL] MESSAGE")
+      (levels . "SLF4J") (timestamp) (aliases))))
+ '(logview-additional-timestamp-formats
+   '(("timezone-dynatrace-extension"
+      (regexp
+       . "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9][0-9][0-9]"))))
  '(lsp-diagnostics-disabled-modes '(python-ts-mode python-mode))
  '(org-agenda-files
    '("~/Notes/tasks/tasks.org" "~/Notes/tasks/inbox.org"
      "~/Notes/denote/"))
  '(org-fold-core-style 'overlays)
  '(package-selected-packages
+ '(package-selected-packages
    '(ag corfu counsel denote diminish ef-themes envrc evil
 	exec-path-from-shell flymake-json flymake-ruff git-gutter
-	go-mode highlight-indent-guides highlight-indentation ivy-rich
-	json-mode kkp logview lsp-pyright lsp-tailwindcss lsp-treemacs
-	lsp-ui multiple-cursors orderless org-download
-	org-journal-tags org-roam orgit projectile pyvenv-auto
-	rainbow-delimiters rg ripgrep spacemacs-theme tree-sitter
-	treemacs-icons-dired treemacs-projectile treesit-fold
-	which-key yaml-pro yasnippet-snippets))
+	highlight-indent-guides highlight-indentation hyperbole
+	ivy-rich json-mode kkp logview lsp-pyright lsp-tailwindcss
+	lsp-treemacs lsp-ui move-text multiple-cursors orderless
+	org-download org-journal-tags org-roam orgit projectile
+	pyvenv-auto rainbow-delimiters rg ripgrep spacemacs-theme
+	tree-sitter treemacs-icons-dired treemacs-projectile which-key
+	yaml-pro yasnippet-snippets))
+ '(projectile-project-search-path '("~/proj"))
  '(safe-local-variable-directories '("~/ext_dev/" ""))
  '(safe-local-variable-values
-   '((lsp-yaml-schemas
+   '((projectile-project-run-cmd . "dt-sdk run --local-ingest")
+     (projectile-project-run-cmd . "dt-sdk run")
+     (lsp-yaml-schemas
       (file:///home/cooper.lenzi%40dynatrace.org/.config/Code/User/globalStorage/dynatraceplatformextensions.dynatrace-extensions/1.309.0/extension.schema.json
        . ["extension.yaml"])))))
 (custom-set-faces

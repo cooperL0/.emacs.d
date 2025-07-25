@@ -23,7 +23,14 @@
 (setq display-time-day-and-date t)
 (setq display-time-load-average nil)
 
+;;Add This to .emacs to split windows vertically as default opening a new buffer in other windows
+;;Its useful in setting the default behavior to vert over horizontal splits when doing things like C-x 4 4.
+;; See https://stackoverflow.com/questions/20167246/emacs-open-buffer-in-vertical-split-by-default for more
+(setq
+   split-width-threshold 0
+   split-height-threshold nil)
 
+(line-number mode)
 (column-number-mode)
 (global-display-line-numbers-mode nil)
 (setq mouse-wheel-scroll-amount-horizontal 50)
@@ -39,6 +46,19 @@
 		vterm-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
+
+(defun cpm/show-and-copy-buffer-filename ()
+  "Show the full path to the current file in the minibuffer and copy to clipboard."
+  (interactive)
+  (let ((file-name (buffer-file-name)))
+    (if file-name
+        (progn
+          (message file-name)
+          (kill-new file-name))
+      (error "Buffer not visiting a file"))))
+
+(global-set-key (kbd "C-h u") 'cpm/show-and-copy-buffer-filename)
+
 ;; set type of line numbering (global variable)
 (setq display-line-numbers-type 'relative)
 (pixel-scroll-precision-mode 1)
@@ -50,15 +70,37 @@
 (set-register ?w '(file . "~/Downloads"))
 
 ;;(set-register ?f ())
+(use-package move-text
+  :ensure t
+  :config
+  (move-text-default-bindings)
 
-(defun file-path-to-register (current-buffer)
-  (defvar file-path 'buffer-file-name
-    "Hold the content of the CURRENT-BUFFER (i.e. the path of the visisted file-buffer)")
-  (when buffer-file-name
-    (set-register ?f (eval file-path)))
+  
+  (defun indent-region-advice (&rest ignored)
+  (let ((deactivate deactivate-mark))
+    (if (region-active-p)
+        (indent-region (region-beginning) (region-end))
+      (indent-region (line-beginning-position) (line-end-position)))
+    (setq deactivate-mark deactivate)))
   )
-;;(file-path-to-register (current-buffer))
-(add-hook 'window-selection-change-functions 'file-path-to-register(current-buffer))
+
+
+(advice-add 'move-text-up :after 'indent-region-advice)
+(advice-add 'move-text-down :after 'indent-region-advice)
+
+
+
+
+;; (defun file-path-to-register (current-buffer)
+;;   (defvar file-path 'buffer-file-name
+;;     "Hold the content of the CURRENT-BUFFER (i.e. the path of the visisted file-buffer)")
+;;   (when buffer-file-name
+;;     (set-register ?f (eval file-path)))
+;;   )
+;; ;;(file-path-to-register (current-buffer))
+;; (add-hook 'window-selection-change-functions 'file-path-to-register(current-buffer))
+
+;; ;;(set-register ?f ())
 
 (defun my/disable-scroll-bars (frame)
   (modify-frame-parameters frame
@@ -120,7 +162,7 @@ Position the cursor at its beginning, according to the current mode."
   (hyperbole-mode 1)
 
 
-  (defvar my/jira-cs-browse-url "https://example.atlassian.net/browse/")
+  (defvar my/jira-cs-browse-url "https://dt-rnd.atlassian.net/browse/")
 
   (defun my/jira-cs-reference (jira-id)
     "Open ticket in CS Jira"
@@ -661,9 +703,11 @@ Position the cursor at its beginning, according to the current mode."
 ;; electric pair mode Setup
 ;;**********************************************
 (use-package elec-pair
+  :ensure t
   :commands elec-pair
-  :config (electric-pair-mode 1)
+  ;;:config (electric-pair-mode 1)
   :bind(("C-c (" . electric-pair-mode))
+  :init (electric-pair-mode 1)
   )
 ;;**********************************************
 ;; Magit Setup
@@ -828,6 +872,7 @@ Position the cursor at its beginning, according to the current mode."
 (global-set-key (kbd "C-c c") #'org-capture)
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
+(setq org-hide-emphasis-markers t)
 
 ;;(require 'org)
 (use-package org
@@ -893,8 +938,10 @@ Position the cursor at its beginning, according to the current mode."
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
-(use-package orgit
-  :ensure t)
+;; (use-package orgit
+;;   :ensure t)
+
+
 ;;(use-package org-journal
 ;;  :init
  ;;  (setq org-journal-file-header 'org-journal-file-header-func)
@@ -1186,3 +1233,4 @@ Position the cursor at its beginning, according to the current mode."
 
 
 (put 'narrow-to-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
