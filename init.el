@@ -30,7 +30,7 @@
    split-width-threshold 0
    split-height-threshold nil)
 
-(line-number mode)
+(line-number-mode)
 (column-number-mode)
 (global-display-line-numbers-mode nil)
 (setq mouse-wheel-scroll-amount-horizontal 50)
