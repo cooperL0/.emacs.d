@@ -60,7 +60,6 @@
      "~/Notes/denote/"))
  '(org-fold-core-style 'overlays)
  '(package-selected-packages
- '(package-selected-packages
    '(ag corfu counsel denote diminish ef-themes envrc evil
 	exec-path-from-shell flymake-json flymake-ruff git-gutter
 	highlight-indent-guides highlight-indentation hyperbole
