@@ -26,9 +26,9 @@
 ;;Add This to .emacs to split windows vertically as default opening a new buffer in other windows
 ;;Its useful in setting the default behavior to vert over horizontal splits when doing things like C-x 4 4.
 ;; See https://stackoverflow.com/questions/20167246/emacs-open-buffer-in-vertical-split-by-default for more
-(setq
-   split-width-threshold 0
-   split-height-threshold nil)
+;; (setq
+;;    split-width-threshold 0
+   ;; split-height-threshold nil)
 
 (line-number-mode)
 (column-number-mode)
@@ -141,6 +141,27 @@ Position the cursor at its beginning, according to the current mode."
 
 ;;(global-set-key [(M-return)] #'er-smart-open-line)
 ;;(global-set-key (kbd "C-j") 'newline-and-indent)
+
+(use-package isearch
+  :ensure nil
+  :defer t
+  :config
+  ;; Isearch convenience, space matches anything (non-greedy)
+(setq search-whitespace-regexp ".*?")
+  (defun my-occur-from-isearch ()
+    (interactive)
+    (let ((query (if isearch-regexp
+               isearch-string
+             (regexp-quote isearch-string))))
+      (isearch-update-ring isearch-string isearch-regexp)
+      (let (search-nonincremental-instead)
+        (ignore-errors (isearch-done t t)))
+      (occur query)))
+  :bind
+  (:map isearch-mode-map
+        ("C-o" . my-occur-from-isearch)))
+
+
 
 (global-set-key (kbd "C-M-r") 'isearch-backward-regexp)
 (global-set-key (kbd "C-M-s") 'isearch-forward-regexp)
@@ -335,64 +356,6 @@ Position the cursor at its beginning, according to the current mode."
   "-o ControlPath=/tmp/ssh-ControlPath-%%r@%%h:%%p "
   "-o ControlMaster=auto -o ControlPersist=yes"))
 
-
-;;****************************************
-;; LSP-Mode
-;;****************************************
-;;https://slinkp.com/python-emacs-lsp-20231229.html
-;;(add-hook 'python-mode-hook 'lsp-deferred)
-
-;;https://github.com/emacs-lsp/lsp-pyright
-(use-package lsp-pyright
-  :ensure t
-  :preface (setq lsp-pyright-langserver-command "basedpyright") ;; or basedpyright
-  :hook (python-mode . (lambda ()
-                          (require 'lsp-pyright)
-                          (lsp-deferred))))  ; or lsp-deferred
-(use-package lsp-mode
-  :ensure t
-  :commands lsp-ui-mode
-  :preface
-  '(lsp-diagnostics-disabled-modes '(python-mode python-ts-mode))
-
-
-  :hook
-  ((python-mode . lsp-deferred)
-  (python-ts-mode . lsp-deferred)
-  (yaml-ts-mode . lsp-deferred)
-  (yaml-mode . lsp-deferred)
-  (tsx-ts-mode . lsp-deferred)
-  (typescript-ts-mode . lsp-deferred)
-  (js-ts-mode . lsp-deferred)
-  (go-ts-mode . lsp-deferred))
-    
-  :config
-  ;;experimental performance tuning
-  (setq read-process-output-max (* 10 1024 1024)) ;; 10mb
-  (setq gc-cons-threshold 200000000)
-
-    (setq lsp-headerline-breadcrumb-icons-enable nil)
-  (setq lsp-headerline-breadcrumb-enable t)
-  ;;Not sure if these are necessary, but want to use ruff as my flymake backend instead of lsp diagnstics
-  (setq lsp-diagnostics-mode 1)
-  (setq lsp-modeline-diagnostics-mode 1)
-  (setq lsp-diagnostics-provider :auto)
-  (setq lsp-modeline-diagnostics-enable t)
-
-  (setq lsp-ui-sideline-enable nil)
-  (add-hook 'hack-local-variables (lambda ()
-				    (when (derived-mode-p 'yaml-mode)
-				      (lsp))))
-  
-  (add-hook 'hack-local-variables (lambda ()
-			          (when (derived-mode-p 'yaml-ts-mode)
-			            (lsp))))
-  ;;===========
-
-)
-
-(use-package lsp-ui
-  :ensure t)
 
 
 ;;**********************************************
@@ -633,21 +596,7 @@ Position the cursor at its beginning, according to the current mode."
 
 ;;MANUAL: npm install -g eslint
 ;;MANUAL: M-x lsp-install-server RET eslint RET
-(use-package lsp-tailwindcss
- :ensure t
- :after lsp-mode
- :init (setq lsp-tailwindcss-add-on-mode t)
-      :config
-      (dolist (tw-major-mode
-               '(css-mode
-                 css-ts-mode
-                 typescript-mode
-                 typescript-ts-mode
-                 tsx-ts-mode
-                 js2-mode
-                 js-ts-mode
-                 clojure-mode))
-        (add-to-list 'lsp-tailwindcss-major-modes tw-major-mode)))
+
 
 
 
@@ -734,17 +683,9 @@ Position the cursor at its beginning, according to the current mode."
   :ensure t
   :after treemacs)
 
-(use-package treemacs-icons-dired
-  :hook (dired-mode . treemacs-icons-dired-enable-once)
-  :ensure t)
-
-(use-package lsp-treemacs
-  :requires (treemacs lsp-ui-mode)
-  :init
-  (lsp-treemacs-sync-mode 1)
-  :config
-  (setq lsp-headerline-breadcrumb-icons-enable nil)
-  )
+;; (use-package treemacs-icons-dired
+;;   :hook (dired-mode . treemacs-icons-dired-enable-once)
+;;   :ensure t)
 
 ;;**********************************************
 ;; Python Setup
@@ -996,35 +937,46 @@ Position the cursor at its beginning, according to the current mode."
 ;;==============================================
 
 ;; ivy rebinds
-(use-package ivy
-  :bind(
-    ;; (global-set-key (kbd "C-c v") 'ivy-push-view)
-    ;; (global-set-key (kbd "C-c V") 'ivy-pop-view)
-	("C-c v" . ivy-push-view)
-	("C-c V" . ivy-pop-view)
-	)
+;; (use-package ivy
+;;   :bind(
+;;     ;; (global-set-key (kbd "C-c v") 'ivy-push-view)
+;;     ;; (global-set-key (kbd "C-c V") 'ivy-pop-view)
+;; 	("C-c v" . ivy-push-view)
+;; 	("C-c V" . ivy-pop-view)
+;; 	)
+;;   )
+
+(use-package icomplete
+  :commands icomplete-mode
+  :config
+;;  (icomplete-mode 1)
+  (fido-mode 1)
   )
 
+ ;; (use-package ido
+ ;;  :commands ido-mode
+ ;;  :config
+ ;;  (ido-mode 1)
+ ;;  ) 
 
-
-(use-package counsel)
+;; (use-package counsel) 
     ;(global-set-key (kbd "C-x C-o") 'counsel-tramp) 
 
-(global-set-key (kbd "M-x") 'counsel-M-x)
-    (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-    (global-set-key (kbd "M-y") 'counsel-yank-pop)
-    (global-set-key (kbd "<f1> f") 'counsel-describe-function)
-    (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-    (global-set-key (kbd "<f1> l") 'counsel-find-library)
-    (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-    (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-    (global-set-key (kbd "<f2> j") 'counsel-set-variable)
-    (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
-    (global-set-key (kbd "C-x d") 'counsel-dired)
+;; (global-set-key (kbd "M-x") 'counsel-M-x)
+;;     (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+;;     (global-set-key (kbd "M-y") 'counsel-yank-pop)
+;;     (global-set-key (kbd "<f1> f") 'counsel-describe-function)
+;;     (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+;;     (global-set-key (kbd "<f1> l") 'counsel-find-library)
+;;     (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+;;     (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+;;     (global-set-key (kbd "<f2> j") 'counsel-set-variable)
+;;     (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
+;;     (global-set-key (kbd "C-x d") 'counsel-dired)
     (global-set-key (kbd "C-x C-b") 'ibuffer)
-(use-package swiper)
-    (global-set-key (kbd "C-r") 'swiper-isearch-backward)
-    (global-set-key (kbd "C-s") 'swiper-isearch)
+;; (use-package swiper)
+;;     (global-set-key (kbd "C-r") 'swiper-isearch-backward)
+;;     (global-set-key (kbd "C-s") 'swiper-isearch)
 
 
 
@@ -1036,13 +988,13 @@ Position the cursor at its beginning, according to the current mode."
 (which-key-setup-side-window-bottom)
 )
 
-(use-package ivy-rich
-  :init
-  (ivy-rich-mode 1))
+;; (use-package ivy-rich
+;;   :init
+;;   (ivy-rich-mode 1))
 
 ;;(global-set-key (kbd "C-x C-b") 'ibuffer-list-buffers)
 (global-set-key (kbd "C-x C-!") 'push-mark-command)
-(global-set-key (kbd "C-x C-#") 'counsel-mark-ring)
+;; (global-set-key (kbd "C-x C-#") 'counsel-mark-ring)
 
 ;;****
 ;;org-roam
