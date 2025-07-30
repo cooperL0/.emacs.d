@@ -23,6 +23,9 @@
 (setq display-time-day-and-date t)
 (setq display-time-load-average nil)
 
+(global-set-key (kbd "C-c m") 'compile)
+(global-set-key (kbd "C-c m") 'recompile)
+(global-set-key (kbd "C-x p l") 'project-recompile)
 ;;Add This to .emacs to split windows vertically as default opening a new buffer in other windows
 ;;Its useful in setting the default behavior to vert over horizontal splits when doing things like C-x 4 4.
 ;; See https://stackoverflow.com/questions/20167246/emacs-open-buffer-in-vertical-split-by-default for more
