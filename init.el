@@ -13,6 +13,85 @@
   (load custom-file))
 
 
+;;====================
+;;Display Buffer alist
+
+(defvar parameters
+  '(window-parameters . ((no-other-window . t)
+                         (no-delete-other-windows . t))))
+
+(setq fit-window-to-buffer-horizontally t)
+(setq window-resize-pixelwise t)
+
+(setq
+ display-buffer-alist
+ `(("\\*Buffer List\\*" display-buffer-in-side-window
+    (side . top) (slot . 0) (window-height . fit-window-to-buffer)
+    (preserve-size . (nil . t)) ,parameters)
+   ("\\*Ibuffer\\*" display-buffer-in-side-window
+    (side . right) (slot . 0) (window-height . fit-window-to-buffer)
+    (preserve-size . (nil . t)) ,parameters)
+   ("\\*Tags List\\*" display-buffer-in-side-window
+    (side . right) (slot . 0) (window-width . fit-window-to-buffer)
+    (preserve-size . (t . nil)) ,parameters)
+   ("\\*\\(?:help\\|grep\\|Completions\\|rg\\|ag\\)\\*"
+    display-buffer-in-side-window
+    (side . bottom) (slot . -1) (preserve-size . (nil . t))
+    ,parameters)
+   ("\\*ag" display-buffer-in-side-window
+    (side . bottom) (slot . 1) (preserve-size . (nil . t))
+    ,parameters)
+   ("\\*ripgrep" display-buffer-in-side-window
+    (side . bottom) (slot . 1) (preserve-size . (nil . t))
+    ,parameters)
+   ("\\magit:" display-buffer-in-side-window
+    (side . right) (slot . 0) (window-height . fit-window-to-buffer)
+    (preserve-size . (nil . t)) ,parameters)
+   ("\\magit-log:" display-buffer-in-side-window
+    (side . right) (slot . 0) (window-height . fit-window-to-buffer)
+    (preserve-size . (nil . t)) ,parameters)
+   ("\\*\\(?:shell\\|compilation\\)\\*" display-buffer-in-side-window
+    (side . bottom) (slot . 1) (preserve-size . (nil . t))
+    ,parameters)
+   ("\\*shell " display-buffer-in-side-window
+    (side . bottom) (slot . 1) (preserve-size . (nil . t))
+    ,parameters)
+   ))
+
+(defun dired-default-directory-on-left ()
+  "Display `default-directory' in side window on left, hiding details."
+  (interactive)
+  (let ((buffer (dired-noselect default-directory)))
+    (with-current-buffer buffer (dired-hide-details-mode t))
+    (display-buffer-in-side-window
+     buffer `((side . left) (slot . 0)
+              (window-width . fit-window-to-buffer)
+              (preserve-size . (t . nil)) ,parameters))))
+
+
+
+(defun my/reload-dir-locals-for-all-buffer-in-this-directory ()
+  "For every buffer with the same `default-directory` as the 
+current buffer's, reload dir-locals."
+  (interactive)
+  (let ((dir default-directory))
+    (dolist (buffer (buffer-list))
+      (with-current-buffer buffer
+        (when (equal default-directory dir)
+          (my/reload-dir-locals-for-current-buffer))))))
+
+;; If you want `switch-to-buffer' and related to respect those rules
+;; (I personally do not want this, because if I am switching to a
+;; specific buffer in the current window, I probably have a good
+;; reason for it):
+(setq switch-to-buffer-obey-display-actions t)
+
+;; If you are in a window that is dedicated to its buffer and try to
+;; `switch-to-buffer' there, tell Emacs to pop a new window instead of
+;; using the current one:
+(setq switch-to-buffer-in-dedicated-window 'pop)
+;;====================
+
 (scroll-bar-mode -1)
 (window-divider-mode 1)
 (tool-bar-mode -1)
@@ -28,13 +107,13 @@
 ;;Its useful in setting the default behavior to vert over horizontal splits when doing things like C-x 4 4.
 ;; See https://stackoverflow.com/questions/20167246/emacs-open-buffer-in-vertical-split-by-default for more
 (setq
-   split-width-threshold 0
-   split-height-threshold nil)
+ split-width-threshold 125
+   split-height-threshold 80)
 
 (line-number-mode)
 (column-number-mode)
 (global-display-line-numbers-mode nil)
-(setq mouse-wheel-scroll-amount-horizontal 50)
+(setq mouse-wheel-scroll-amount-horizontal 15)
 
 (global-hl-line-mode 1)
 
@@ -92,16 +171,27 @@
 
 
 
-;; (defun file-path-to-register (current-buffer)
-;;   (defvar file-path 'buffer-file-name
-;;     "Hold the content of the CURRENT-BUFFER (i.e. the path of the visisted file-buffer)")
-;;   (when buffer-file-name
-;;     (set-register ?f (eval file-path)))
-;;   )
-;; ;;(file-path-to-register (current-buffer))
-;; (add-hook 'window-selection-change-functions 'file-path-to-register(current-buffer))
+(defun file-path-to-register (current-buffer)
+  (defvar file-path 'buffer-file-name
+    "Hold the content of the CURRENT-BUFFER (i.e. the path of the visisted file-buffer)")
+  (when buffer-file-name
+    (set-register ?f (eval file-path)))
+  )
+;;(file-path-to-register (current-buffer))
+(add-hook 'window-selection-change-functions 'file-path-to-register(current-buffer))
 
-;; ;;(set-register ?f ())
+;;(set-register ?f ())
+
+(defun file-path-to-register (current-buffer)
+  (defvar file-path 'buffer-file-name
+    "Hold the content of the CURRENT-BUFFER (i.e. the path of the visisted file-buffer)")
+  (when buffer-file-name
+    (set-register ?f (eval file-path)))
+  )
+;;(file-path-to-register (current-buffer))
+(add-hook 'window-selection-change-functions 'file-path-to-register(current-buffer))
+
+
 
 (defun my/disable-scroll-bars (frame)
   (modify-frame-parameters frame
@@ -467,10 +557,6 @@ Position the cursor at its beginning, according to the current mode."
   (add-hook 'prog-mode-hook (lambda () (visual-line-mode 0)))
   (toggle-truncate-lines 1)
 
-  (defalias 'tri-layout
-    (kmacro "C-x 3 C-x { C-x z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z C-x 2 C-x o C-x o C-x 3 C-x } C-x z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z z"))
-
-  (global-set-key (kbd "C-x C-k 1") 'tri-layout)
   
   :diminish global-auto-revert-mode
             auto-revert-mode
@@ -704,11 +790,9 @@ Position the cursor at its beginning, according to the current mode."
 ;; electric pair mode Setup
 ;;**********************************************
 (use-package elec-pair
-  :ensure t
   :commands elec-pair
-  ;;:config (electric-pair-mode 1)
+  :config (electric-pair-mode 1)
   :bind(("C-c (" . electric-pair-mode))
-  :init (electric-pair-mode 1)
   )
 ;;**********************************************
 ;; Magit Setup
@@ -735,9 +819,9 @@ Position the cursor at its beginning, according to the current mode."
   :ensure t
   :after treemacs)
 
-(use-package treemacs-icons-dired
-  :hook (dired-mode . treemacs-icons-dired-enable-once)
-  :ensure t)
+;; (use-package treemacs-icons-dired
+;;   :hook (dired-mode . treemacs-icons-dired-enable-once)
+;;   :ensure t)
 
 (use-package lsp-treemacs
   :requires (treemacs lsp-ui-mode)
@@ -997,37 +1081,63 @@ Position the cursor at its beginning, according to the current mode."
 ;;==============================================
 
 ;; ivy rebinds
-(use-package ivy
-  :bind(
-    ;; (global-set-key (kbd "C-c v") 'ivy-push-view)
-    ;; (global-set-key (kbd "C-c V") 'ivy-pop-view)
-	("C-c v" . ivy-push-view)
-	("C-c V" . ivy-pop-view)
-	)
-  )
+;; (use-package ivy
+;;   :bind(
+;;     ;; (global-set-key (kbd "C-c v") 'ivy-push-view)
+;;     ;; (global-set-key (kbd "C-c V") 'ivy-pop-view)
+;; ;;	("C-c v" . ivy-push-view)
+;; ;	("C-c V" . ivy-pop-view)
+;; 	)
+;;   )
+;; (use-package vertico
+;;   :ensure t
+;;   :init
+;;   (vertico-mode)
+;;   )
 
-
-
-(use-package counsel)
-    ;(global-set-key (kbd "C-x C-o") 'counsel-tramp) 
-
-(global-set-key (kbd "M-x") 'counsel-M-x)
-    (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-    (global-set-key (kbd "M-y") 'counsel-yank-pop)
-    (global-set-key (kbd "<f1> f") 'counsel-describe-function)
-    (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-    (global-set-key (kbd "<f1> l") 'counsel-find-library)
-    (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-    (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-    (global-set-key (kbd "<f2> j") 'counsel-set-variable)
-    (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
-    (global-set-key (kbd "C-x d") 'counsel-dired)
     (global-set-key (kbd "C-x C-b") 'ibuffer)
-(use-package swiper)
-    (global-set-key (kbd "C-r") 'swiper-isearch-backward)
-    (global-set-key (kbd "C-s") 'swiper-isearch)
+;; (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
+;; (global-set-key (kbd "C-x d") 'counsel-dired)
+
+;; (use-package counsel)
+;;     ;(global-set-key (kbd "C-x C-o") 'counsel-tramp) 
+
+;;     (global-set-key (kbd "M-x") 'counsel-M-x)
+;;     ;;(global-set-key (kbd "C-x C-f") 'counsel-find-file)
+;;     (global-set-key (kbd "M-y") 'yank-pop)
+;;     (global-set-key (kbd "<f1> f") 'counsel-describe-function)
+;;     (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+;;     (global-set-key (kbd "<f1> l") 'counsel-find-library)
+;;     (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+;;     (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+;;     (global-set-key (kbd "<f2> j") 'counsel-set-variable)
+;;     ;; (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
+;;     ;; (global-set-key (kbd "C-x d") 'counsel-dired)
 
 
+;; (use-package swiper)
+;;     (global-set-key (kbd "C-r") 'swiper-isearch-backward)
+;;     (global-set-key (kbd "C-s") 'swiper-isearch)
+
+(use-package isearch
+  :ensure nil
+  :defer t
+  :config
+  (defun my-occur-from-isearch ()
+    (interactive)
+    (let ((query (if isearch-regexp
+               isearch-string
+             (regexp-quote isearch-string))))
+      (isearch-update-ring isearch-string isearch-regexp)
+      (let (search-nonincremental-instead)
+        (ignore-errors (isearch-done t t)))
+      (occur query)))
+  :bind
+  (:map isearch-mode-map
+        ("C-o" . my-occur-from-isearch)))
+
+(global-set-key (kbd "C-r") 'isearch-backward)
+(global-set-key (kbd "C-s") 'isearch-forward)
 
 (use-package which-key
   :init (which-key-mode)
@@ -1037,13 +1147,36 @@ Position the cursor at its beginning, according to the current mode."
 (which-key-setup-side-window-bottom)
 )
 
-(use-package ivy-rich
-  :init
-  (ivy-rich-mode 1))
+(use-package consult
+  :ensure t
+  ;; Replace bindings. Lazily loaded by `use-package'.
+  :bind (;; C-c bindings in `mode-specific-map'
 
-;;(global-set-key (kbd "C-x C-b") 'ibuffer-list-buffers)
-(global-set-key (kbd "C-x C-!") 'push-mark-command)
-(global-set-key (kbd "C-x C-#") 'counsel-mark-ring)
+	 ("C-c M-x" . consult-mode-command)
+         ("M-g i" . consult-imenu)
+         ("M-g I" . consult-imenu-multi)
+	 ("M-g g" . consult-goto-line)             ;; orig. goto-line
+	 ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+	 ;;("C-s" . consult-line)
+	 ;; M-s bindings in `search-map'
+         ("M-s d" . consult-find)                  ;; Alternative: consult-fd
+         ("M-s c" . consult-locate)
+         ("M-s g" . consult-grep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
+	 ))
+
+;; (use-package ivy-rich
+;;   :init
+;;   (ivy-rich-mode 1))
+
+;; ;;(global-set-key (kbd "C-x C-b") 'ibuffer-list-buffers)
+;; (global-set-key (kbd "C-x C-!") 'push-mark-command)
+;; (global-set-key (kbd "C-x C-#") 'counsel-mark-ring)
 
 ;;****
 ;;org-roam
@@ -1119,24 +1252,6 @@ Position the cursor at its beginning, according to the current mode."
      ;; Automatically rename Denote buffers using the `denote-rename-buffer-format'.
      (denote-rename-buffer-mode 1))
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ;;==============================================
 ;; Auto Save Behavior

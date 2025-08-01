@@ -3,7 +3,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes '(ef-cherie))
+ '(custom-enabled-themes '(tsdh-dark))
  '(custom-safe-themes
    '("c038d994d271ebf2d50fa76db7ed0f288f17b9ad01b425efec09519fa873af53"
      "6af300029805f10970ebec4cea3134f381cd02f04c96acba083c76e2da23f3ec"
@@ -43,7 +43,9 @@
      "bbb13492a15c3258f29c21d251da1e62f1abb8bbd492386a673dcfab474186af"
      "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf"
      default))
+ '(datetime-timezone 'America/New_York)
  '(dired-listing-switches "-alt")
+ '(ediff-merge-split-window-function 'split-window-vertically)
  '(elfeed-feeds '("blog.aaronbieber.com/posts/index.xml"))
  '(logview-additional-submodes
    '(("dynatrace-extension"
@@ -55,12 +57,13 @@
       (regexp
        . "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9][0-9][0-9]"))))
  '(lsp-diagnostics-disabled-modes '(python-ts-mode python-mode))
+ '(magit-log-margin '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
  '(org-agenda-files
    '("~/Notes/tasks/tasks.org" "~/Notes/tasks/inbox.org"
      "~/Notes/denote/"))
  '(org-fold-core-style 'overlays)
  '(package-selected-packages
-   '(ag corfu counsel denote diminish ef-themes envrc evil
+   '(ag consult corfu counsel denote diminish ef-themes envrc evil
 	exec-path-from-shell flymake-json flymake-ruff git-gutter
 	highlight-indent-guides highlight-indentation hyperbole
 	ivy-rich json-mode kkp logview lsp-pyright lsp-tailwindcss
