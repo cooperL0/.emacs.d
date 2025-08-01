@@ -1080,44 +1080,44 @@ Position the cursor at its beginning, according to the current mode."
 ;;Improving emacs defaults
 ;;==============================================
 
-;; ivy rebinds
-;; (use-package ivy
-;;   :bind(
-;;     ;; (global-set-key (kbd "C-c v") 'ivy-push-view)
-;;     ;; (global-set-key (kbd "C-c V") 'ivy-pop-view)
-;; ;;	("C-c v" . ivy-push-view)
-;; ;	("C-c V" . ivy-pop-view)
-;; 	)
-;;   )
+ivy rebinds
+(use-package ivy
+  :bind(
+    ;; (global-set-key (kbd "C-c v") 'ivy-push-view)
+    ;; (global-set-key (kbd "C-c V") 'ivy-pop-view)
+	("C-c v" . ivy-push-view)
+	("C-c V" . ivy-pop-view)
+	)
+  )
 ;; (use-package vertico
 ;;   :ensure t
 ;;   :init
 ;;   (vertico-mode)
 ;;   )
 
-    (global-set-key (kbd "C-x C-b") 'ibuffer)
-;; (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
-;; (global-set-key (kbd "C-x d") 'counsel-dired)
+;;(global-set-key (kbd "C-x C-b") 'ibuffer)
+(global-set-key (kbd "C-x b") 'counsel-switch-buffer)
+(global-set-key (kbd "C-x d") 'counsel-dired)
 
-;; (use-package counsel)
+(use-package counsel)
 ;;     ;(global-set-key (kbd "C-x C-o") 'counsel-tramp) 
 
-;;     (global-set-key (kbd "M-x") 'counsel-M-x)
-;;     ;;(global-set-key (kbd "C-x C-f") 'counsel-find-file)
-;;     (global-set-key (kbd "M-y") 'yank-pop)
-;;     (global-set-key (kbd "<f1> f") 'counsel-describe-function)
-;;     (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-;;     (global-set-key (kbd "<f1> l") 'counsel-find-library)
-;;     (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-;;     (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-;;     (global-set-key (kbd "<f2> j") 'counsel-set-variable)
-;;     ;; (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
-;;     ;; (global-set-key (kbd "C-x d") 'counsel-dired)
+    (global-set-key (kbd "M-x") 'counsel-M-x)
+    ;;(global-set-key (kbd "C-x C-f") 'counsel-find-file)
+    (global-set-key (kbd "M-y") 'yank-pop)
+    (global-set-key (kbd "<f1> f") 'counsel-describe-function)
+    (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+    (global-set-key (kbd "<f1> l") 'counsel-find-library)
+    (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+    (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+    (global-set-key (kbd "<f2> j") 'counsel-set-variable)
+    ;; (global-set-key (kbd "C-x b") 'counsel-switch-buffer)
+    ;; (global-set-key (kbd "C-x d") 'counsel-dired)
 
 
-;; (use-package swiper)
-;;     (global-set-key (kbd "C-r") 'swiper-isearch-backward)
-;;     (global-set-key (kbd "C-s") 'swiper-isearch)
+(use-package swiper)
+    (global-set-key (kbd "C-r") 'swiper-isearch-backward)
+    (global-set-key (kbd "C-s") 'swiper-isearch)
 
 (use-package isearch
   :ensure nil
@@ -1136,8 +1136,8 @@ Position the cursor at its beginning, according to the current mode."
   (:map isearch-mode-map
         ("C-o" . my-occur-from-isearch)))
 
-(global-set-key (kbd "C-r") 'isearch-backward)
-(global-set-key (kbd "C-s") 'isearch-forward)
+;; (global-set-key (kbd "C-r") 'isearch-backward)
+;; (global-set-key (kbd "C-s") 'isearch-forward)
 
 (use-package which-key
   :init (which-key-mode)
@@ -1147,34 +1147,34 @@ Position the cursor at its beginning, according to the current mode."
 (which-key-setup-side-window-bottom)
 )
 
-(use-package consult
-  :ensure t
-  ;; Replace bindings. Lazily loaded by `use-package'.
-  :bind (;; C-c bindings in `mode-specific-map'
+;; (use-package consult
+;;   :ensure t
+;;   ;; Replace bindings. Lazily loaded by `use-package'.
+;;   :bind (;; C-c bindings in `mode-specific-map'
 
-	 ("C-c M-x" . consult-mode-command)
-         ("M-g i" . consult-imenu)
-         ("M-g I" . consult-imenu-multi)
-	 ("M-g g" . consult-goto-line)             ;; orig. goto-line
-	 ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
-	 ;;("C-s" . consult-line)
-	 ;; M-s bindings in `search-map'
-         ("M-s d" . consult-find)                  ;; Alternative: consult-fd
-         ("M-s c" . consult-locate)
-         ("M-s g" . consult-grep)
-         ("M-s G" . consult-git-grep)
-         ("M-s r" . consult-ripgrep)
-         ("M-s l" . consult-line)
-         ("M-s L" . consult-line-multi)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
-	 ))
+;; 	 ("C-c M-x" . consult-mode-command)
+;;          ("M-g i" . consult-imenu)
+;;          ("M-g I" . consult-imenu-multi)
+;; 	 ("M-g g" . consult-goto-line)             ;; orig. goto-line
+;; 	 ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+;; 	 ;;("C-s" . consult-line)
+;; 	 ;; M-s bindings in `search-map'
+;;          ("M-s d" . consult-find)                  ;; Alternative: consult-fd
+;;          ("M-s c" . consult-locate)
+;;          ("M-s g" . consult-grep)
+;;          ("M-s G" . consult-git-grep)
+;;          ("M-s r" . consult-ripgrep)
+;;          ("M-s l" . consult-line)
+;;          ("M-s L" . consult-line-multi)
+;;          ("M-s k" . consult-keep-lines)
+;;          ("M-s u" . consult-focus-lines)
+;; 	 ))
 
-;; (use-package ivy-rich
-;;   :init
-;;   (ivy-rich-mode 1))
+(use-package ivy-rich
+  :init
+  (ivy-rich-mode 1))
 
-;; ;;(global-set-key (kbd "C-x C-b") 'ibuffer-list-buffers)
+(global-set-key (kbd "C-x C-b") 'ibuffer-list-buffers)
 ;; (global-set-key (kbd "C-x C-!") 'push-mark-command)
 ;; (global-set-key (kbd "C-x C-#") 'counsel-mark-ring)
 
